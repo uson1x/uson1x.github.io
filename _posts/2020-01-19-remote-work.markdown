@@ -23,7 +23,7 @@ Lack of human contact
 ===
 When I only see my coworkers on video, it starts feeling lonely sometimes. Talking on video is not the same as talking in real life, and I find that some kind of human contact is necessary. Some companies do get together a few times a year and I find that helpful to connect with your colleagues, but not enough.
 
-![Cocoaheads meetup]({{site.baseurl}}/assets/2020-01-19-cocoaheads-small.jpg)
+![Cocoaheads meetup]({{site.baseurl}}/assets/2020-01-19-cocoaheads-small-img.jpg)
 
 If you feel lonely, here are some of the activities that might help:
 * Local meetups and conferences. If your coworkers are far away, but you want to talk about your work, meetups and conferences are great places to do that
