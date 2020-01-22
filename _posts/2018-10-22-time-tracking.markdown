@@ -9,7 +9,7 @@ For a couple of months, I’ve been tracking my time during the weekdays. I trie
 
 Let’s go over an 11 week period and see what’s interesting in there, shall we?
 
-![Toggl time tracking report](/assets/2018-10-22-time-tracking.jpg)
+![Toggl time tracking report]({{site.baseurl}}/assets/2018-10-22-time-tracking.jpg)
 
 Eating
 ===
