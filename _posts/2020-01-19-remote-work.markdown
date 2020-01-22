@@ -21,7 +21,7 @@ What I found to be helpful:
 
 Lack of human contact
 ===
-If you only see your coworkers on video, you might start feeling lonely at some point. Talking on video is not the same as talking in real life, and I find that some kind of human contact is necessary. Some companies do get together a few times a year and I find that helpful to connect with your colleagues, but not enough.
+When I only see my coworkers on video, it starts feeling lonely sometimes. Talking on video is not the same as talking in real life, and I find that some kind of human contact is necessary. Some companies do get together a few times a year and I find that helpful to connect with your colleagues, but not enough.
 
 ![Cocoaheads meetup]({{site.baseurl}}/assets/2020-01-19-cocoaheads-small.jpg)
 
