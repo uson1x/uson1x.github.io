@@ -1,0 +1,14 @@
+---
+# Only the main Sass file needs front matter (the dashes are enough)
+---
+
+@import "minima";
+
+body { color: #fff; background-color: #171921; }
+
+/** Links */
+a { color: #fff; text-decoration: none; }
+a:visited { color: #fff; }
+a:hover { color: #fff; text-decoration: underline; }
+
+.site-title, .site-title:visited { color: #fff }
