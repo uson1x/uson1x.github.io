@@ -1,6 +1,7 @@
 ---
 layout: post
-title:  "10 years of remote work: lessons learned"
+title: "10 years of remote work: tips and tricks"
+description: "Tips and tricks of how to work remotely successfully"
 date:   2020-01-22 20:35:23 +0300
 categories: remote work
 ---

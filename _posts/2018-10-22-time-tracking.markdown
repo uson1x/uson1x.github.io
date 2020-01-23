@@ -1,6 +1,7 @@
 ---
 layout: post
-title:  "Time tracking"
+title: "Time tracking"
+description: "Results of tracking my time for two months"
 date:   2018-10-22 21:00:00 +0300
 categories: time tracking
 ---

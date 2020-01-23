@@ -16,17 +16,27 @@
 title: Ivan Parfenchuk
 email: hi@theivan.io
 description: >- # this means to ignore newlines until "baseurl:"
+  Personal blog of Ivan Parfenchuk
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://blog.theivan.io" # the base hostname & protocol for your site, e.g. http://example.com
 main_url: "https://blog.theivan.io" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: parfenchuk
+twitter:
+  username: parfenchuk
+  card: summary
 github_username:  uson1x
 
 # Build settings
 markdown: kramdown
 theme: minima
+social:
+  name: Ivan Parfenchuk
+  links:
+    - https://twitter.com/parfenchuk
+    - https://github.com/uson1x
 plugins:
   - jekyll-feed
+  - jekyll-seo-tag
 
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
