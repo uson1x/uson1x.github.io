@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "10 years of remote work: lessons learned"
-date:   2020-01-19 21:03:06 +0300
+date:   2020-01-22 20:35:23 +0300
 categories: remote work
 ---
 
