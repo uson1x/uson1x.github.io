@@ -3,7 +3,7 @@ layout: post
 title: "How to make Apple Watch Haptic Engine continue playing in background"
 description: "Guide on how to make Apple Watch Haptic Engine playing haptics when your app goes into background"
 date:   2020-02-02 21:35:23 +0300
-categories: apple watch, watchkit
+categories: watchkit
 ---
 
 If you are building an app where you want the haptics to continue playing when your Apple Watch app is sent to the background, you need to use the so-called "Extended session" (WKExtendedRuntimeSession).
