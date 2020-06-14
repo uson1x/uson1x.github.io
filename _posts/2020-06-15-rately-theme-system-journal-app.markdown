@@ -69,4 +69,4 @@ There is some new RevenueCat terminology you need to learn, like entitlements an
 
 Please, go to the App Store, try the app and let me know what you think!
 
-[![Download on the App Store]({{site.baseurl}}/assets/Download_on_the_App_Store_Badge.svg)](https://rately.cc)
+[![Download on the App Store]({{site.baseurl}}/assets/Download_on_the_App_Store_Badge.svg)](https://apps.apple.com/app/rately-theme-system-journal/id1510322095)
