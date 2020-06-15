@@ -30,7 +30,7 @@ Please, welcome, [**Rately**](https://rately.cc).
 
 Rately lets you track your most important activities daily.
 
-Just create a new "daily theme" and start tracking.
+Just create a new activity and start tracking.
 
 ## Neumorphic design
 
