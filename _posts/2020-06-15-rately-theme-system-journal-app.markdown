@@ -1,9 +1,10 @@
 ---
 layout: post
-title: "Rately: Theme System Journal app"
+title: "Rately: Do What's Important, Daily"
 description: "iOS app for tracking your important activites, daily"
 date:   2020-06-15 08:00:00 +0300
 categories: my apps
+permalink: /my/apps/2020/06/15/rately-theme-system-journal-app
 ---
 
 ## Background
@@ -69,4 +70,4 @@ There is some new RevenueCat terminology you need to learn, like entitlements an
 
 Please, go to the App Store, try the app and let me know what you think!
 
-[![Download on the App Store]({{site.baseurl}}/assets/Download_on_the_App_Store_Badge.svg)](https://apps.apple.com/app/rately-theme-system-journal/id1510322095)
+[![Download on the App Store]({{site.baseurl}}/assets/Download_on_the_App_Store_Badge.svg)](https://apps.apple.com/app/id1510322095)
