@@ -1,0 +1,621 @@
+---
+layout: default
+title: "PDF File Converter"
+permalink: /pdf-converter/
+---
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>
+      PDF &amp; Page Editor with Continuous Preview &amp; File Size Estimate
+    </title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      .wrapper {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0; /* Removes centering margins */
+        padding: 0;
+      }
+      .container {
+        display: flex;
+        gap: 20px;
+      }
+      .page-editor {
+        width: 300px;
+        border: 1px solid #ccc;
+        padding: 10px;
+      }
+      .page-editor h2 {
+        margin-top: 0;
+      }
+      #dropZone {
+        border: 2px dashed #ccc;
+        padding: 10px;
+        text-align: center;
+        margin-bottom: 10px;
+        cursor: pointer;
+      }
+      #dropZone.dragover {
+        background-color: #e8f0fe;
+      }
+      #pageList {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      #pageList li {
+        border: 1px solid #ddd;
+        margin-bottom: 5px;
+        padding: 5px;
+        display: flex;
+        align-items: center;
+      }
+      #pageList li img {
+        max-width: 100px;
+        max-height: 100px;
+      }
+      #pageList li .remove-button {
+        margin-left: auto;
+        background: #f44336;
+        color: white;
+        border: none;
+        padding: 5px 8px;
+        cursor: pointer;
+      }
+      .controls {
+        flex: 1;
+        border: 1px solid #ccc;
+        padding: 10px;
+        position: relative;
+      }
+      .controls h1 {
+        margin-top: 0;
+      }
+      .controls label {
+        display: block;
+        margin-top: 10px;
+      }
+      .controls input,
+      .controls button {
+        margin-top: 5px;
+      }
+      #status {
+        margin-top: 15px;
+        font-style: italic;
+      }
+      /* File size indicator at top right of controls */
+      #sizeEstimate {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        text-align: right;
+        font-weight: bold;
+      }
+      /* Preview Section Styles */
+      #previewSection {
+        margin-top: 20px;
+        border-top: 1px dashed #ccc;
+        padding-top: 10px;
+      }
+      #previewSection h2 {
+        margin-bottom: 5px;
+      }
+      #zoomControl {
+        margin-bottom: 10px;
+      }
+      /* Limit the preview container to the parent's width */
+      #previewContainer {
+        border: 1px solid #ccc;
+        background-color: #fafafa;
+        overflow: auto;
+        max-height: 400px;
+        width: 100%;
+        max-width: 100%;
+        position: relative;
+        cursor: grab;
+      }
+      /* Ensuring preview images never exceed container's width */
+      #previewContainer img {
+        display: block;
+        max-width: 100%;
+        height: auto;
+        transform: scale(1);
+        transform-origin: top left;
+        transition: transform 0.2s ease-out;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Left Column: Page Editor -->
+      <div class="page-editor">
+        <h2>Page Editor</h2>
+        <p>Drag &amp; drop images or PDFs below, or use the file input.</p>
+        <input type="file" id="fileInput" multiple accept="image/*,.pdf" />
+        <div id="dropZone">
+          <p>Drop files here</p>
+        </div>
+        <ul id="pageList"></ul>
+      </div>
+
+      <!-- Right Column: Controls, Preview, and Export -->
+      <div class="controls">
+        <h1>Export PDF</h1>
+        <!-- File size estimation indicator (positioned at the top right) -->
+        <div id="sizeEstimate">Estimated file size: Calculating...</div>
+        <div>
+          <label for="resolution">Target Resolution (% - e.g., 50):</label>
+          <input
+            type="number"
+            id="resolution"
+            value="100"
+            min="10"
+            max="100"
+            step="10"
+          />
+        </div>
+        <div>
+          <label for="quality">JPEG Quality (%):</label>
+          <input
+            type="number"
+            id="quality"
+            value="100"
+            min="10"
+            max="100"
+            step="10"
+          />
+        </div>
+        <div style="margin-top: 10px">
+          <button id="exportBtn">Export PDF</button>
+        </div>
+        <div id="status"></div>
+
+        <!-- Preview Section (auto‑updating) -->
+        <div id="previewSection">
+          <h2>Preview</h2>
+          <div id="zoomControl">
+            Zoom:
+            <input type="range" id="zoomRange" min="50" max="200" value="100" />
+            <span id="zoomValue">100%</span>
+          </div>
+          <div id="previewContainer">
+            <!-- Preview images will be auto‑inserted here -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- pdf.js library (with worker) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script>
+      pdfjsLib.GlobalWorkerOptions.workerSrc =
+        "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js"
+    </script>
+
+    <!-- jsPDF library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <!-- SortableJS library (for drag‑and‑drop reordering) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+
+    <script>
+      // Global pages array and unique ID counter.
+      let pages = []
+      let pageIdCounter = 0
+
+      // Renders the list of pages (thumbnails) in the Page Editor.
+      function renderPageList() {
+        const pageList = document.getElementById("pageList")
+        pageList.innerHTML = ""
+        pages.forEach((page) => {
+          const li = document.createElement("li")
+          li.setAttribute("data-id", page.id)
+
+          // Create a thumbnail image element.
+          const img = document.createElement("img")
+          // For image pages, use the file data; for PDFs, use the pre‑generated preview.
+          img.src = page.type === "image" ? page.src : page.preview
+          li.appendChild(img)
+
+          // Add a label for PDF pages.
+          if (page.type === "pdf") {
+            const label = document.createElement("span")
+            label.textContent = "PDF Page " + page.pageNum
+            label.style.marginLeft = "10px"
+            li.appendChild(label)
+          }
+
+          // Remove button to delete the page.
+          const removeBtn = document.createElement("button")
+          removeBtn.textContent = "Remove"
+          removeBtn.className = "remove-button"
+          removeBtn.addEventListener("click", function () {
+            removePage(page.id)
+          })
+          li.appendChild(removeBtn)
+
+          pageList.appendChild(li)
+        })
+        // After rendering pages, update the preview (and file size estimation).
+        debouncedUpdatePreview()
+      }
+
+      // Removes a page (by its id) from the pages array.
+      function removePage(id) {
+        pages = pages.filter((page) => page.id !== id)
+        renderPageList()
+      }
+
+      // Update order based on SortableJS changes.
+      function updatePagesOrder() {
+        const pageListItems = document.querySelectorAll("#pageList li")
+        const newOrder = []
+        pageListItems.forEach((item) => {
+          const id = parseInt(item.getAttribute("data-id"))
+          const page = pages.find((p) => p.id === id)
+          if (page) newOrder.push(page)
+        })
+        pages = newOrder
+        // Update preview after reordering.
+        debouncedUpdatePreview()
+      }
+
+      // Initialize SortableJS for the page editor list.
+      new Sortable(document.getElementById("pageList"), {
+        animation: 150,
+        onEnd: updatePagesOrder,
+      })
+
+      // Handle dropped or selected files.
+      function handleFiles(files) {
+        Array.from(files).forEach((file) => {
+          if (file.type.match("image.*")) {
+            const reader = new FileReader()
+            reader.onload = function (e) {
+              const img = new Image()
+              img.onload = function () {
+                const pageData = {
+                  id: pageIdCounter++,
+                  type: "image",
+                  src: e.target.result,
+                  width: img.naturalWidth,
+                  height: img.naturalHeight,
+                }
+                pages.push(pageData)
+                renderPageList()
+              }
+              img.src = e.target.result
+            }
+            reader.readAsDataURL(file)
+          } else if (file.type === "application/pdf") {
+            const reader = new FileReader()
+            reader.onload = async function (e) {
+              const arrayBuffer = e.target.result
+              try {
+                const pdf = await pdfjsLib.getDocument({ data: arrayBuffer })
+                  .promise
+                for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                  const pdfPage = await pdf.getPage(pageNum)
+                  // Create a low‑scale preview thumbnail.
+                  const previewScale = 0.3
+                  const viewport = pdfPage.getViewport({ scale: previewScale })
+                  const canvas = document.createElement("canvas")
+                  canvas.width = viewport.width
+                  canvas.height = viewport.height
+                  const ctx = canvas.getContext("2d")
+                  await pdfPage.render({
+                    canvasContext: ctx,
+                    viewport: viewport,
+                  }).promise
+                  const previewDataURL = canvas.toDataURL()
+
+                  // Get original dimensions.
+                  const origViewport = pdfPage.getViewport({ scale: 1 })
+
+                  const pageData = {
+                    id: pageIdCounter++,
+                    type: "pdf",
+                    arrayBuffer: arrayBuffer,
+                    pageNum: pageNum,
+                    preview: previewDataURL,
+                    width: origViewport.width,
+                    height: origViewport.height,
+                  }
+                  pages.push(pageData)
+                  renderPageList()
+                }
+              } catch (error) {
+                console.error("Error processing PDF file:", error)
+              }
+            }
+            reader.readAsArrayBuffer(file)
+          } else {
+            alert("Unsupported file type: " + file.type)
+          }
+        })
+      }
+
+      // Set up file input event for adding files.
+      document
+        .getElementById("fileInput")
+        .addEventListener("change", function (e) {
+          handleFiles(e.target.files)
+          e.target.value = ""
+        })
+
+      // Set up drag‑and‑drop on the drop zone.
+      const dropZone = document.getElementById("dropZone")
+      dropZone.addEventListener("dragover", function (e) {
+        e.preventDefault()
+        dropZone.classList.add("dragover")
+      })
+      dropZone.addEventListener("dragleave", function (e) {
+        e.preventDefault()
+        dropZone.classList.remove("dragover")
+      })
+      dropZone.addEventListener("drop", function (e) {
+        e.preventDefault()
+        dropZone.classList.remove("dragover")
+        if (e.dataTransfer.files && e.dataTransfer.files.length) {
+          handleFiles(e.dataTransfer.files)
+        }
+      })
+      dropZone.addEventListener("click", function () {
+        document.getElementById("fileInput").click()
+      })
+
+      // Process a single page for export or preview.
+      async function processExportPage(page, scaleFactor, qualityFactor) {
+        return new Promise(async (resolve, reject) => {
+          try {
+            if (page.type === "image") {
+              const img = new Image()
+              img.onload = function () {
+                const canvas = document.createElement("canvas")
+                const targetWidth = img.naturalWidth * scaleFactor
+                const targetHeight = img.naturalHeight * scaleFactor
+                canvas.width = targetWidth
+                canvas.height = targetHeight
+                const ctx = canvas.getContext("2d")
+                ctx.drawImage(img, 0, 0, targetWidth, targetHeight)
+                const imgData = canvas.toDataURL("image/jpeg", qualityFactor)
+                resolve({ imgData, width: targetWidth, height: targetHeight })
+              }
+              img.onerror = function () {
+                reject("Error loading image.")
+              }
+              img.src = page.src
+            } else if (page.type === "pdf") {
+              const loadingTask = pdfjsLib.getDocument({
+                data: page.arrayBuffer,
+              })
+              const pdfDoc = await loadingTask.promise
+              const pdfPage = await pdfDoc.getPage(page.pageNum)
+              const viewport = pdfPage.getViewport({ scale: scaleFactor })
+              const canvas = document.createElement("canvas")
+              canvas.width = viewport.width
+              canvas.height = viewport.height
+              const ctx = canvas.getContext("2d")
+              await pdfPage.render({ canvasContext: ctx, viewport: viewport })
+                .promise
+              const imgData = canvas.toDataURL("image/jpeg", qualityFactor)
+              resolve({
+                imgData,
+                width: viewport.width,
+                height: viewport.height,
+              })
+            }
+          } catch (error) {
+            reject(error)
+          }
+        })
+      }
+
+      // Helper to estimate file size from a base64 data URL.
+      // (Removes the "data:image/jpeg;base64," prefix and estimates bytes.)
+      function estimateFileSize(dataUrl) {
+        const base64String = dataUrl.split(",")[1] || ""
+        // Approximate size in bytes.
+        const sizeInBytes = Math.floor((base64String.length * 3) / 4)
+        return sizeInBytes
+      }
+
+      // Helper to format bytes nicely.
+      function formatBytes(bytes) {
+        if (bytes < 1024) return bytes + " B"
+        else if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB"
+        else return (bytes / (1024 * 1024)).toFixed(1) + " MB"
+      }
+
+      // Asynchronously generate/update the preview and file size estimate.
+      async function updatePreview() {
+        const statusDiv = document.getElementById("status")
+        statusDiv.textContent = "Generating preview..."
+        const resInput = document.getElementById("resolution")
+        const qualInput = document.getElementById("quality")
+        const resolutionPercent = parseFloat(resInput.value) || 100
+        const qualityPercent = parseFloat(qualInput.value) || 100
+        const scaleFactor = resolutionPercent / 100
+        const qualityFactor = qualityPercent / 100
+        const previewContainer = document.getElementById("previewContainer")
+        previewContainer.innerHTML = "" // Clear preview area
+
+        let totalSizeBytes = 0
+
+        if (pages.length === 0) {
+          statusDiv.textContent = "No pages to preview."
+          document.getElementById("sizeEstimate").textContent =
+            "Estimated file size: 0 B"
+          return
+        }
+
+        try {
+          for (let i = 0; i < pages.length; i++) {
+            statusDiv.textContent = `Previewing page ${i + 1} of ${
+              pages.length
+            }...`
+            const page = pages[i]
+            const { imgData } = await processExportPage(
+              page,
+              scaleFactor,
+              qualityFactor
+            )
+
+            // Create and append preview image.
+            const previewImg = document.createElement("img")
+            previewImg.src = imgData
+            previewContainer.appendChild(previewImg)
+
+            // Estimate the file size for this page and add to total.
+            totalSizeBytes += estimateFileSize(imgData)
+          }
+          statusDiv.textContent = "Preview updated."
+          document.getElementById("sizeEstimate").textContent =
+            "Estimated file size: " + formatBytes(totalSizeBytes)
+        } catch (error) {
+          console.error("Error generating preview:", error)
+          statusDiv.textContent =
+            "Error generating preview. See console for details."
+        }
+      }
+
+      // Debounce helper to limit update frequency.
+      function debounce(func, delay) {
+        let timer
+        return function () {
+          clearTimeout(timer)
+          timer = setTimeout(() => {
+            func()
+          }, delay)
+        }
+      }
+
+      // Create a debounced version of updatePreview.
+      const debouncedUpdatePreview = debounce(updatePreview, 500)
+
+      // Auto‑update preview on changes to resolution or quality.
+      document
+        .getElementById("resolution")
+        .addEventListener("input", debouncedUpdatePreview)
+      document
+        .getElementById("quality")
+        .addEventListener("input", debouncedUpdatePreview)
+
+      // Enable drag-to-pan on the preview container.
+      ;(function enablePreviewDrag() {
+        const previewContainer = document.getElementById("previewContainer")
+        let isDragging = false
+        let startX, startY, scrollLeft, scrollTop
+
+        previewContainer.addEventListener("mousedown", (e) => {
+          // Only respond to left mouse button.
+          if (e.button !== 0) return
+          isDragging = true
+          previewContainer.style.cursor = "grabbing"
+          startX = e.pageX - previewContainer.offsetLeft
+          startY = e.pageY - previewContainer.offsetTop
+          scrollLeft = previewContainer.scrollLeft
+          scrollTop = previewContainer.scrollTop
+          e.preventDefault()
+        })
+        previewContainer.addEventListener("mouseleave", () => {
+          isDragging = false
+          previewContainer.style.cursor = "grab"
+        })
+        previewContainer.addEventListener("mouseup", () => {
+          isDragging = false
+          previewContainer.style.cursor = "grab"
+        })
+        previewContainer.addEventListener("mousemove", (e) => {
+          if (!isDragging) return
+          e.preventDefault()
+          const x = e.pageX - previewContainer.offsetLeft
+          const y = e.pageY - previewContainer.offsetTop
+          const walkX = x - startX
+          const walkY = y - startY
+          previewContainer.scrollLeft = scrollLeft - walkX
+          previewContainer.scrollTop = scrollTop - walkY
+        })
+      })()
+
+      // Zoom control for the preview images.
+      document
+        .getElementById("zoomRange")
+        .addEventListener("input", function (e) {
+          const zoomValue = parseInt(e.target.value, 10)
+          document.getElementById("zoomValue").textContent = zoomValue + "%"
+          const previewImages = document.querySelectorAll(
+            "#previewContainer img"
+          )
+          previewImages.forEach((img) => {
+            img.style.transform = "scale(" + zoomValue / 100 + ")"
+          })
+        })
+
+      // Export PDF: Process all pages and build the PDF.
+      document
+        .getElementById("exportBtn")
+        .addEventListener("click", async function () {
+          const statusDiv = document.getElementById("status")
+          statusDiv.textContent = "Processing export..."
+          const resInput = document.getElementById("resolution")
+          const qualInput = document.getElementById("quality")
+          const resolutionPercent = parseFloat(resInput.value) || 100
+          const qualityPercent = parseFloat(qualInput.value) || 100
+          const scaleFactor = resolutionPercent / 100
+          const qualityFactor = qualityPercent / 100
+
+          if (pages.length === 0) {
+            alert("No pages to export. Please add files first.")
+            statusDiv.textContent = ""
+            return
+          }
+
+          try {
+            const { jsPDF } = window.jspdf
+            let pdfOutput = null
+            for (let i = 0; i < pages.length; i++) {
+              statusDiv.textContent = `Processing page ${i + 1} of ${
+                pages.length
+              }...`
+              const page = pages[i]
+              const { imgData, width, height } = await processExportPage(
+                page,
+                scaleFactor,
+                qualityFactor
+              )
+              if (i === 0) {
+                const orientation = width > height ? "landscape" : "portrait"
+                pdfOutput = new jsPDF({
+                  orientation: orientation,
+                  unit: "pt",
+                  format: [width, height],
+                })
+                pdfOutput.addImage(imgData, "JPEG", 0, 0, width, height)
+              } else {
+                const orientation = width > height ? "landscape" : "portrait"
+                pdfOutput.addPage([width, height], orientation)
+                pdfOutput.addImage(imgData, "JPEG", 0, 0, width, height)
+              }
+            }
+            statusDiv.textContent = "Export complete. Downloading PDF..."
+            pdfOutput.save("exported.pdf")
+            statusDiv.textContent = "PDF exported successfully!"
+          } catch (error) {
+            console.error("Export error:", error)
+            statusDiv.textContent =
+              "Error during export. See console for details."
+          }
+        })
+
+      // Initial call to update preview (in case pages already exist).
+      debouncedUpdatePreview()
+    </script>
+  </body>
+</html>
