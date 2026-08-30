@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Жильё для первокурсника ГУАП — Санкт-Петербург 2026</title>
+<meta name="description" content="Интерактивный гид по аренде жилья в Петербурге для студента ГУАП: цены по районам, апарт-отели, время в пути, общежитие.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+--bg:#0b0e14;--bg2:#121722;--card:#161c29;--card2:#1c2433;
+--line:#252e40;--line2:#334059;
+--tx:#e6ecf7;--tx2:#95a3bd;--tx3:#66748f;
+--acc:#5b8cff;--acc2:#7c5cff;--ok:#2fd18a;--warn:#ffb020;--bad:#ff5c72;
+--r:16px;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--acc);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1180px;margin:0 auto;padding:0 18px}
+
+/* ---------- hero ---------- */
+.hero{position:relative;overflow:hidden;padding:56px 0 40px;border-bottom:1px solid var(--line)}
+.hero:before{content:"";position:absolute;inset:-40% -10% auto -10%;height:520px;
+background:radial-gradient(60% 60% at 20% 20%,rgba(91,140,255,.22),transparent 70%),
+radial-gradient(50% 50% at 80% 10%,rgba(124,92,255,.18),transparent 70%);
+filter:blur(10px);pointer-events:none}
+.hero>*{position:relative}
+.kicker{display:inline-flex;align-items:center;gap:8px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--tx2);
+border:1px solid var(--line2);border-radius:999px;padding:6px 14px;background:rgba(255,255,255,.02)}
+h1{font-size:clamp(28px,5vw,46px);line-height:1.08;letter-spacing:-.02em;margin:18px 0 14px;font-weight:800}
+h1 em{font-style:normal;background:linear-gradient(100deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lede{max-width:720px;color:var(--tx2);font-size:17px}
+.facts{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+.fact{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-size:13px;color:var(--tx2)}
+.fact b{color:var(--tx);font-size:16px;display:block;font-weight:700}
+
+/* ---------- alert ---------- */
+.alert{margin:26px 0 0;background:linear-gradient(180deg,rgba(255,176,32,.10),rgba(255,176,32,.03));
+border:1px solid rgba(255,176,32,.35);border-radius:var(--r);padding:16px 18px}
+.alert h3{font-size:15px;margin-bottom:6px;color:var(--warn)}
+.alert p{color:var(--tx2);font-size:14px}
+.alert p+p{margin-top:6px}
+
+/* ---------- nav ---------- */
+nav{position:sticky;top:0;z-index:50;background:rgba(11,14,20,.82);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+nav .wrap::-webkit-scrollbar{display:none}
+nav a{padding:14px 14px;font-size:14px;color:var(--tx2);border-bottom:2px solid transparent;white-space:nowrap}
+nav a:hover{color:var(--tx);text-decoration:none}
+nav a.on{color:var(--tx);border-bottom-color:var(--acc)}
+
+section{padding:52px 0;border-bottom:1px solid var(--line)}
+h2{font-size:clamp(22px,3.2vw,30px);letter-spacing:-.02em;font-weight:800;margin-bottom:8px}
+.sub{color:var(--tx2);max-width:760px;margin-bottom:26px}
+
+/* ---------- controls ---------- */
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;margin-bottom:22px}
+.ctl{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:22px}
+.ctl label{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--tx3);margin-bottom:9px}
+.val{color:var(--acc);font-weight:700;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:5px;border-radius:5px;background:var(--line2);outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;
+background:linear-gradient(135deg,var(--acc),var(--acc2));cursor:pointer;border:3px solid var(--bg);box-shadow:0 0 0 1px var(--acc)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;border:3px solid var(--bg)}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{border:1px solid var(--line2);background:var(--card2);color:var(--tx2);border-radius:999px;padding:7px 13px;
+font-size:13px;cursor:pointer;transition:.15s;user-select:none}
+.chip:hover{border-color:var(--acc);color:var(--tx)}
+.chip.on{background:linear-gradient(135deg,var(--acc),var(--acc2));border-color:transparent;color:#fff;font-weight:600}
+select{background:var(--card2);color:var(--tx);border:1px solid var(--line2);border-radius:10px;padding:9px 12px;font-size:14px;width:100%}
+
+.count{display:flex;align-items:baseline;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.count b{font-size:20px}
+.count span{color:var(--tx3);font-size:13px}
+
+/* ---------- cards ---------- */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;transition:.18s;cursor:pointer;position:relative;overflow:hidden}
+.card:hover{border-color:var(--line2);transform:translateY(-2px)}
+.card.open{border-color:var(--acc)}
+.card .top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.card h3{font-size:17px;font-weight:700;letter-spacing:-.01em}
+.card .metro{font-size:12px;color:var(--tx3);margin-top:3px}
+.price{text-align:right;white-space:nowrap}
+.price b{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;display:block;letter-spacing:-.02em}
+.price s{display:block;font-size:11px;color:var(--tx3);text-decoration:none}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:13px}
+.tag{font-size:11px;padding:4px 9px;border-radius:7px;background:var(--card2);color:var(--tx2);border:1px solid var(--line)}
+.tag.g{color:var(--ok);border-color:rgba(47,209,138,.3);background:rgba(47,209,138,.08)}
+.tag.y{color:var(--warn);border-color:rgba(255,176,32,.3);background:rgba(255,176,32,.08)}
+.tag.r{color:var(--bad);border-color:rgba(255,92,114,.3);background:rgba(255,92,114,.08)}
+.tag.b{color:var(--acc);border-color:rgba(91,140,255,.3);background:rgba(91,140,255,.08)}
+.bar{height:5px;border-radius:5px;background:var(--line);margin-top:14px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:5px;background:linear-gradient(90deg,var(--ok),var(--warn),var(--bad))}
+.barlbl{display:flex;justify-content:space-between;font-size:11px;color:var(--tx3);margin-top:6px}
+.more{margin-top:15px;padding-top:15px;border-top:1px solid var(--line);display:none;animation:fade .2s}
+.card.open .more{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(-4px)}to{opacity:1}}
+.rates{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:13px}
+.rate{font-size:12px;color:var(--tx2);display:flex;align-items:center;gap:7px;justify-content:space-between}
+.dots{display:flex;gap:3px}
+.dots i{width:7px;height:7px;border-radius:50%;background:var(--line2)}
+.dots i.f{background:var(--acc)}
+.pc{font-size:13px;margin-bottom:7px;padding-left:20px;position:relative;color:var(--tx2)}
+.pc:before{position:absolute;left:0;top:0}
+.pc.p:before{content:"+";color:var(--ok);font-weight:800}
+.pc.c:before{content:"−";color:var(--bad);font-weight:800}
+.verdict{background:var(--card2);border-left:3px solid var(--acc);border-radius:0 10px 10px 0;padding:11px 13px;font-size:13px;color:var(--tx);margin-top:12px}
+.ptab{width:100%;font-size:12px;margin-top:13px;border-collapse:collapse}
+.ptab td{padding:6px 0;border-bottom:1px solid var(--line);color:var(--tx2)}
+.ptab td:last-child{text-align:right;color:var(--tx);font-variant-numeric:tabular-nums;white-space:nowrap}
+.ptab tr:last-child td{border:none}
+.empty{text-align:center;padding:48px 20px;color:var(--tx3);background:var(--card);border:1px dashed var(--line2);border-radius:var(--r)}
+
+/* ---------- generic blocks ---------- */
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px}
+.box h3{font-size:16px;margin-bottom:10px;display:flex;align-items:center;gap:9px}
+.box h3 .n{width:26px;height:26px;flex:none;border-radius:8px;background:linear-gradient(135deg,var(--acc),var(--acc2));
+display:grid;place-items:center;font-size:13px;font-weight:800;color:#fff}
+.box p,.box li{color:var(--tx2);font-size:14px}
+.box ul,.box ol{padding-left:19px;display:grid;gap:7px}
+.box li::marker{color:var(--tx3)}
+.q{background:var(--card2);border-radius:10px;padding:11px 13px;font-size:13px;color:var(--tx2);
+border-left:3px solid var(--line2);margin-top:10px;font-style:italic}
+.step{display:flex;gap:14px;padding:16px 0;border-bottom:1px solid var(--line)}
+.step:last-child{border:none}
+.step .n{width:30px;height:30px;flex:none;border-radius:9px;background:var(--card2);border:1px solid var(--line2);
+display:grid;place-items:center;font-size:13px;font-weight:800;color:var(--acc)}
+.step h4{font-size:15px;margin-bottom:5px}
+.step p{color:var(--tx2);font-size:14px}
+table.t{width:100%;border-collapse:collapse;font-size:14px}
+table.t th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--tx3);padding:10px;border-bottom:1px solid var(--line2)}
+table.t td{padding:11px 10px;border-bottom:1px solid var(--line);color:var(--tx2)}
+table.t td b{color:var(--tx)}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+footer{padding:40px 0 60px;color:var(--tx3);font-size:13px}
+footer p+p{margin-top:8px}
+@media(max-width:640px){
+ section{padding:38px 0}
+ .grid{grid-template-columns:1fr}
+ .hero{padding:36px 0 30px}
+}
+</style>
+</head>
+<body>
+<header class="hero">
+<div class="wrap">
+  <div class="kicker">ГУАП · 1 курс · сезон 2026/27</div>
+  <h1>Где жить первокурснику <em>ГУАП</em> в Петербурге</h1>
+  <p class="lede">Пока не дали общежитие — надо где-то жить. Здесь собраны цены по всем районам и области, апарт-отели, реальное время в дороге до корпуса и пошаговый план, как всё-таки получить место в общаге.</p>
+  <div class="facts">
+    <div class="fact"><b>25</b> районов и пригородов</div>
+    <div class="fact"><b>30+</b> апарт-отелей и хостелов</div>
+    <div class="fact"><b>&lt; 60 000 ₽</b> потолок бюджета</div>
+    <div class="fact"><b>2 200 ₽</b> общежитие ГУАП / мес</div>
+  </div>
+
+  <div class="alert">
+    <h3>Прочитайте это до того, как начнёте смотреть квартиры</h3>
+    <p><b>Первокурсник ГУАП учится не в центре, а у метро «Московская».</b> Главное здание на Большой Морской, 67 — это администрация и старшие курсы. Деканаты и занятия младших курсов почти всех институтов (№1, №2, №3, №4, ИФПТИ, гуманитарный) находятся на <b>улице Гастелло, 15</b> — 5–8 минут пешком от метро «Московская». Институт №8 — на Ленсовета, 14, там же рядом. Колледж (ФСПО) — Московский проспект, 149В.</p>
+    <p>Из-за этого вся логика выбора района переворачивается: снимать надо под «Московскую», а не под центр. Уточните у куратора точный адрес корпуса до того, как подпишете договор — на странице есть время в пути до обоих адресов.</p>
+    <p style="color:var(--tx3);font-size:13px;margin-top:10px">Отдельно: адрес «Ивана Черных, 4», который иногда приписывают ГУАП, к университету отношения не имеет — там Высшая школа технологии и энергетики СПбГУПТД.</p>
+  </div>
+</div>
+</header>
+
+<nav>
+<div class="wrap">
+  <a href="#explore" class="on">Подбор жилья</a>
+  <a href="#aparts">Апарт-отели</a>
+  <a href="#dorm">Общежитие</a>
+  <a href="#money">Деньги и транспорт</a>
+  <a href="#safe">Как не попасть</a>
+  <a href="#plan">Что делать</a>
+</div>
+</nav>
+
+<section id="explore">
+<div class="wrap">
+  <h2>Подбор по районам</h2>
+  <p class="sub">Крутите ползунки под свои условия. Цена — это ставка аренды в месяц без коммуналки; в карточке раскрывается полная стоимость жизни с КУ и проездным. Время в пути — «от двери до двери» в утренний час пик.</p>
+
+  <div class="panel">
+    <div class="ctl">
+      <div>
+        <label>Что снимаем</label>
+        <div class="chips" id="segChips"></div>
+      </div>
+      <div>
+        <label>Бюджет на аренду — до <span class="val" id="budgetV">45 000 ₽</span></label>
+        <input type="range" id="budget" min="8000" max="60000" step="1000" value="45000">
+        <div class="barlbl"><span>8 000 ₽</span><span>60 000 ₽</span></div>
+      </div>
+      <div>
+        <label>Дорога до корпуса — не более <span class="val" id="timeV">60 мин</span></label>
+        <input type="range" id="time" min="15" max="100" step="5" value="60">
+        <div class="barlbl"><span>15 мин</span><span>100 мин</span></div>
+      </div>
+      <div>
+        <label>Куда ездить каждый день</label>
+        <select id="campus">
+          <option value="tMos">Гастелло 15 / Ленсовета 14 — м. Московская (1 курс)</option>
+          <option value="tBm">Большая Морская 67 — м. Адмиралтейская (старшие курсы)</option>
+        </select>
+      </div>
+      <div>
+        <label>Пояс города</label>
+        <div class="chips" id="zoneChips"></div>
+      </div>
+      <div>
+        <label>Сортировать</label>
+        <select id="sort">
+          <option value="score">По балансу цены и дороги</option>
+          <option value="price">Сначала дешевле</option>
+          <option value="time">Сначала ближе к корпусу</option>
+          <option value="life">По качеству жизни</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="count"><b id="cnt">—</b><span id="cntNote"></span></div>
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="empty" style="display:none">Под эти условия ничего не подходит. Поднимите бюджет, увеличьте допустимое время в дороге или смените тип жилья — например, комната вместо студии.</div>
+</div>
+</section>
+<section id="aparts">
+<div class="wrap">
+  <h2>Апарт-отели и хостелы</h2>
+  <p class="sub">Формат для тех, кто не хочет связываться с частным собственником: договор с юрлицом, ресепшн, уборка, никакой комиссии агенту и никакого «извините, племянник приехал, съезжайте за неделю». Платите за это примерно как за однушку, живя в 18–25 метрах.</p>
+
+  <div class="panel">
+    <div class="ctl">
+      <div>
+        <label>Бюджет — до <span class="val" id="aBudgetV">50 000 ₽</span> в месяц</label>
+        <input type="range" id="aBudget" min="5000" max="60000" step="1000" value="50000">
+        <div class="barlbl"><span>5 000 ₽</span><span>60 000 ₽</span></div>
+      </div>
+      <div>
+        <label>Тип</label>
+        <div class="chips" id="aTypeChips"></div>
+      </div>
+      <div>
+        <label>Сортировать</label>
+        <select id="aSort">
+          <option value="price">Сначала дешевле</option>
+          <option value="tMos">Ближе к Московской</option>
+          <option value="tBm">Ближе к Большой Морской</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="count"><b id="aCnt">—</b><span>цены — тарифы операторов на конец августа 2026; всегда перепроверяйте на сайте</span></div>
+  <div class="grid" id="aGrid"></div>
+  <div class="empty" id="aEmpty" style="display:none">Ничего не нашлось — поднимите бюджет.</div>
+
+  <div class="cols" style="margin-top:28px">
+    <div class="box">
+      <h3>Плюсы формата</h3>
+      <ul>
+        <li>Договор с компанией, а не с человеком. Внезапно выселить не могут.</li>
+        <li>Нет комиссии агенту — это сразу минус 15–30 тысяч на входе.</li>
+        <li>Ресепшн круглосуточно, охрана, электронные замки. Родителям спокойнее.</li>
+        <li>Уборка и смена белья раз в 1–2 недели, прачечная, часто коворкинг и спортзал.</li>
+        <li>Заезжаешь с чемоданом: мебель, техника, посуда уже есть.</li>
+        <li>Часто коммуналка уже в цене — бюджет предсказуем.</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>Минусы, о которых не пишут в рекламе</h3>
+      <ul>
+        <li>Дорого за метр: 18–22 м² по цене полноценной однушки.</li>
+        <li>Апартаменты — <b>нежилой фонд</b>. Регистрация только по месту пребывания, не по месту жительства.</li>
+        <li>Тарифы на коммуналку выше жилых: 5 800–10 000 ₽ сверху, если не включены.</li>
+        <li>В смешанных комплексах соседи меняются каждые сутки — шум и чемоданы в лифте.</li>
+        <li>Съезжать надо предупреждать за 30 дней, иначе удержат депозит.</li>
+        <li>В двухместном номере ушёл сосед — платишь за двоих.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="q" style="margin-top:14px">Лайфхак: юниты в апарт-комплексах часто сдают и сами собственники — на 30–50% дешевле тарифа оператора. Например, в комплексе START на Парнасе оператор просит 34 900 ₽, а частники за те же 22 м² — от 18 000 до 30 000 ₽. Сервиса и уборки не будет, но охрана, лифты и инфраструктура комплекса те же.</div>
+</div>
+</section>
+
+<section id="dorm">
+<div class="wrap">
+  <h2>Общежитие: нормально ли, что мест нет</h2>
+  <p class="sub">Короткий ответ: да, это штатная ситуация, а не отфутболивание. Университет сам это пишет. Но есть конкретные вещи, которые реально двигают очередь, и есть одна ошибка, которая выкидывает из неё навсегда.</p>
+
+  <div class="cols">
+    <div class="box">
+      <h3><span class="n">1</span>Что есть у ГУАП</h3>
+      <p>Три собственных общежития на 1 686 мест плюс около 886 мест в партнёрских Межвузовского студгородка. На весь университет.</p>
+      <div class="scroll"><table class="t" style="margin-top:12px">
+        <tr><th>Адрес</th><th>Мест</th><th>Метро</th></tr>
+        <tr><td><b>Маршала Жукова, 24</b><br><span style="font-size:12px;color:var(--tx3)">2-местные секции</span></td><td>537</td><td>Юго-Западная, 200 м</td></tr>
+        <tr><td><b>Передовиков, 13</b><br><span style="font-size:12px;color:var(--tx3)">2/3/4-местные блоки</span></td><td>922</td><td>Ладожская + наземка</td></tr>
+        <tr><td><b>Варшавская, 8</b><br><span style="font-size:12px;color:var(--tx3)">3-местные, коридорная</span></td><td>227</td><td>Электросила, 300 м</td></tr>
+        <tr><td><b>Новоизмайловский, 16</b><br><span style="font-size:12px;color:var(--tx3)">МСГ, 4-местные</span></td><td>775</td><td>Парк Победы, 600 м</td></tr>
+      </table></div>
+      <p style="margin-top:12px"><b>Цена: 2 400 ₽/мес</b> за комнату на 1–3 человек и 2 200 ₽ на 4+. Одинаково для бюджета и контракта. Любая аренда проигрывает этому в 10 раз.</p>
+    </div>
+
+    <div class="box">
+      <h3><span class="n">2</span>Как устроена очередь</h3>
+      <p>С 1 сентября 2026 действует новое Положение (приказ ГУАП № 05-558/26 от 30.07.2026), принятое во исполнение приказа Минобрнауки № 301 от 18.05.2026.</p>
+      <ul style="margin-top:10px">
+        <li>Нуждающийся — тот, у кого нет жилья и регистрации в Петербурге и Ленобласти. Иногородний подходит автоматически.</li>
+        <li>Места распределяются <b>по институтам</b>, внутри института очередь строится <b>по баллам ЕГЭ</b>. Чем выше балл — тем выше в списке.</li>
+        <li>Платники и целевики имеют те же права, что бюджетники.</li>
+        <li>Законных оснований для отказа ровно два: не признан нуждающимся или <b>нет свободных мест</b>. Третьего не существует.</li>
+        <li>Вуз обязан вести реестр нуждающихся с очерёдностью — <b>значит, вы имеете право узнать свой номер</b>.</li>
+      </ul>
+      <div class="q">С сайта ГУАП: «Большинство студентов получит место сразу, на собраниях в конце августа. Остальные попадут в общеуниверситетскую очередь и будут заселены по мере освобождения мест».</div>
+    </div>
+
+    <div class="box">
+      <h3><span class="n">3</span>Единственный законный способ обогнать очередь</h3>
+      <p>В Положении есть закрытый список первоочередников: сироты, инвалиды I–II групп и с детства, потерявшие родителя во время учёбы, чернобыльцы, ветераны боевых действий, контрактники со стажем 3+ года — и отдельным пунктом <b>«студенты, получившие государственную социальную помощь»</b>.</p>
+      <p style="margin-top:10px">Последний пункт — единственный, доступный обычной семье без инвалидности и сиротства. Оформляется в органах соцзащиты <b>по месту жительства семьи</b>, не в Петербурге, при доходе ниже прожиточного минимума на человека. Занимает 1–2 месяца, поэтому запускать надо в сентябре.</p>
+      <p style="margin-top:10px;color:var(--warn)"><b>Важно:</b> просто многодетность или «нам тяжело» в перечень не входят. Нужна именно оформленная справка о назначении государственной социальной помощи.</p>
+    </div>
+
+    <div class="box">
+      <h3><span class="n">4</span>Ошибка, которая стоит места</h3>
+      <p>По пункту 2.16 Положения студент, <b>отказавшийся от предложенного места, исключается из очереди</b>. Насовсем.</p>
+      <p style="margin-top:10px">Поэтому: предложили 4-местную комнату в МСГ на Новоизмайловском или общежитие на Передовиков, куда от метро ехать наземкой — <b>соглашайтесь</b>. Заселяйтесь, а потом пишите заявление на переселение: перевод между общежитиями по просьбе проживающего допускается.</p>
+      <div class="q">Второе окно возможностей — <b>февраль</b>, сразу после первой сессии: отчисления, академы, съехавшие. Приходить лично в первую неделю февраля, пока места не разобрали.</div>
+    </div>
+  </div>
+
+  <div class="box" style="margin-top:14px">
+    <h3>Кому звонить и писать</h3>
+    <div class="scroll"><table class="t">
+      <tr><th>Кто</th><th>Где</th><th>Контакт</th></tr>
+      <tr><td><b>Отдел по координации работы в общежитиях</b><br><span style="font-size:12px;color:var(--tx3)">начальник Пивцаев М. Ю.</span></td><td>Б. Морская, 67, каб. 52-50а</td><td>+7 812 494-70-37<br>4947095@guap.ru</td></tr>
+      <tr><td><b>Профком студентов</b><br><span style="font-size:12px;color:var(--tx3)">участвует в согласовании очерёдности</span></td><td>Б. Морская, 67, каб. 51-02А<br>Гастелло, 15, ауд. 13-13</td><td>+7 812 312-50-55</td></tr>
+      <tr><td><b>Проректор Павлов И. А.</b><br><span style="font-size:12px;color:var(--tx3)">курирует Жилищную комиссию и квоты</span></td><td>каб. 12-22, приём вторник 11:00–13:00</td><td>через приёмную</td></tr>
+      <tr><td><b>Ректор Антохина Ю. А.</b></td><td>каб. 13-28, приём вторник 10:00–12:00</td><td>antoxina@guap.ru</td></tr>
+      <tr><td><b>Общая канцелярия</b><br><span style="font-size:12px;color:var(--tx3)">для официальных обращений</span></td><td>190000, СПб, Б. Морская, 67</td><td>+7 812 494-70-05<br>info@guap.ru</td></tr>
+      <tr><td>Общежитие Маршала Жукова, 24</td><td>заведующая Дёмкина Л. Н.</td><td>+7 812 757-28-77</td></tr>
+      <tr><td>Общежитие Передовиков, 13</td><td>заведующий Фёдоров Д. В.</td><td>+7 812 520-14-70</td></tr>
+      <tr><td>Общежитие Варшавская, 8</td><td>заведующая Сафина З. М.</td><td>+7 812 368-00-30</td></tr>
+    </table></div>
+  </div>
+</div>
+</section>
+
+<section id="money">
+<div class="wrap">
+  <h2>Сколько это на самом деле стоит</h2>
+  <p class="sub">Месячная ставка аренды — это не вся правда. Есть коммуналка, есть проездной, и есть вход в сделку, который обычно и оказывается настоящим ограничителем.</p>
+
+  <div class="cols">
+    <div class="box">
+      <h3>Вход в сделку</h3>
+      <p>Единовременно на старте нужно 2–3 месячные ставки:</p>
+      <ul style="margin-top:10px">
+        <li><b>Первый месяц</b> — вперёд, всегда.</li>
+        <li><b>Залог</b> — как правило 100% месяца. Часто удаётся разбить на 2–3 платежа, спрашивайте.</li>
+        <li><b>Комиссия агенту</b> — 30–100% ставки, медиана около 50%. Примерно половина объявлений на рынке — без комиссии, фильтруйте по этому признаку.</li>
+      </ul>
+      <div class="q">Студия за 28 000 ₽ означает 56 000–84 000 ₽ единовременно в день заезда. Это, а не ежемесячный платёж, чаще всего и рушит план.</div>
+    </div>
+
+    <div class="box">
+      <h3>Коммуналка</h3>
+      <p>Цена в объявлении почти всегда <b>без КУ</b>. Типично 2 000–8 000 ₽/мес, и это сезонная величина: летом около 3 000, в отопительный сезон около 6 000.</p>
+      <ul style="margin-top:10px">
+        <li>Счётчики на воду и свет часто идут сверх фиксированной суммы.</li>
+        <li>Заселяетесь вдвоём — собственник обычно добавляет ~1 000 ₽ к КУ.</li>
+        <li>Интернет чаще включён, иначе 500–800 ₽.</li>
+        <li>Индексация тарифов ЖКХ в 2026 году сдвинута на октябрь — с середины осени станет дороже.</li>
+      </ul>
+    </div>
+
+    <div class="box">
+      <h3>Проездной 2026</h3>
+      <p>Тарифы Петербургского метрополитена, распоряжение Комитета по тарифам № 343-р от 29.12.2025:</p>
+      <div class="scroll"><table class="t" style="margin-top:8px">
+        <tr><th>Билет</th><th>Цена</th></tr>
+        <tr><td><b>Месячный единый для студентов</b><br><span style="font-size:12px;color:var(--tx3)">метро + автобус + трамвай + троллейбус</span></td><td><b style="color:var(--ok)">1 599 ₽</b></td></tr>
+        <tr><td>Для студентов СПО / колледжа</td><td>797 ₽</td></tr>
+        <tr><td>Только метро, студенческий</td><td>906 ₽</td></tr>
+        <tr><td>Единый без льготы</td><td>4 938 ₽</td></tr>
+        <tr><td>Жетон метро / по «Подорожнику»</td><td>95 ₽ / 65 ₽</td></tr>
+      </table></div>
+      <p style="margin-top:12px;color:var(--warn)"><b>Ловушка Ленобласти:</b> льготный студенческий БСК <b>не действует</b> на областных маршрутах. Живя в Мурино, Кудрово, Сертолово, Всеволожске или Гатчине, за подвозку до метро платите отдельно и по полному тарифу — это плюс 1 500–2 500 ₽ в месяц, что съедает почти всю экономию на аренде.</p>
+    </div>
+
+    <div class="box">
+      <h3>Как получить студенческий БСК</h3>
+      <ol style="margin-top:4px">
+        <li>Дождаться сентября: отдел социально-воспитательной работы ГУАП передаёт базу первокурсников в метрополитен. Раньше оформить нельзя.</li>
+        <li>На переходный период взять временную карту «БСК Курс».</li>
+        <li>С паспортом и студенческим — в любую кассу метро. Пластик 80 ₽, возвратные.</li>
+        <li>Постоянная именная карта с фото — Чернорецкий переулок, 3 (м. Площадь Александра Невского-2), ежедневно 9:30–19:30, 250 ₽. Фотографируют на месте, поездки с временной карты переносятся автоматически.</li>
+      </ol>
+      <p style="margin-top:10px">Альтернатива — записать студенческий проездной на «Единую карту петербуржца». Для поездок домой на выходные есть отдельная льгота студентам на пригородные электрички.</p>
+    </div>
+  </div>
+
+  <div class="box" style="margin-top:14px">
+    <h3>Сезонность: сейчас худшее время для съёма</h3>
+    <p>Август–сентябрь — пик года, синхронно со студенческим заездом. За лето 2026 ставки выросли на 6–7% (для сравнения: +13% в 2025 и более +20% в 2023–2024, то есть рост замедляется). Прогноз до конца года — от +2–5% до +8–10% в зависимости от источника.</p>
+    <p style="margin-top:10px">Дно рынка — конец зимы и начало весны. Практический вывод: <b>если снимаете в августе, старайтесь подписать договор на 11 месяцев с фиксированной ставкой</b> — переподписание следующим летом обойдётся дороже. Торг в сезон почти не работает, в межсезонье реален на 5–10%.</p>
+  </div>
+</div>
+</section>
+
+<section id="safe">
+<div class="wrap">
+  <h2>Как не попасть на деньги</h2>
+  <p class="sub">Иногородний первокурсник в августе — идеальная мишень: спешит, города не знает, родители далеко и переведут деньги по первой просьбе. Пять схем, которые работают именно на этой публике.</p>
+
+  <div class="cols">
+    <div class="box"><h3><span class="n">1</span>Платный доступ к базе</h3><p>Просят 2 000–5 000 ₽ за «закрытый список квартир от собственников». Списка не существует, деньги невозвратные, формально вы купили «информационную услугу».</p></div>
+    <div class="box"><h3><span class="n">2</span>Задаток за бронь по фото</h3><p>«Квартиру смотрят ещё двое, переведите задаток, чтобы придержать». Квартиры нет вообще, фото взяты из старого объявления. Никогда не переводите деньги до личного осмотра.</p></div>
+    <div class="box"><h3><span class="n">3</span>Пересдача чужой квартиры</h3><p>Сдаёт человек, который сам её арендует и не имеет права пересдавать. Через месяц приходит настоящий собственник и выселяет. Лечится проверкой ЕГРН.</p></div>
+    <div class="box"><h3><span class="n">4</span>Фейковое агентство</h3><p>Берут комиссию вперёд, показывают два-три заведомо неподходящих объекта — и всё, договор об оказании услуг формально исполнен, деньги не вернуть.</p></div>
+    <div class="box"><h3><span class="n">5</span>Двойная сдача</h3><p>Одна квартира сдана нескольким людям одновременно, залог взят с каждого. Обнаруживается в день заезда.</p></div>
+    <div class="box"><h3><span class="n">6</span>Посуточная под видом длительной</h3><p>Заселяют, берут за месяц, через две недели выселяют «по условиям бронирования». Проверяйте, что в договоре именно наём на длительный срок.</p></div>
+  </div>
+
+  <div class="box" style="margin-top:14px">
+    <h3>Чек-лист перед передачей денег</h3>
+    <div class="step"><span class="n">1</span><div><h4>Закажите выписку из ЕГРН самостоятельно</h4><p>Не смотрите ту, что прислали вам. Стоит около 350 ₽, показывает настоящего собственника и обременения. Это единственная проверка, которую нельзя подделать.</p></div></div>
+    <div class="step"><span class="n">2</span><div><h4>Сверьте паспорт с выпиской</h4><p>ФИО в паспорте должно совпадать с ЕГРН до буквы. Если сдаёт родственник или представитель — только нотариальная доверенность, устные «это квартира мамы» не считаются.</p></div></div>
+    <div class="step"><span class="n">3</span><div><h4>Договор найма в письменном виде</h4><p>Обязательно: срок, ставка, можно ли её поднимать и как часто, кто платит коммуналку, условия расторжения с обеих сторон, порядок и сроки возврата залога.</p></div></div>
+    <div class="step"><span class="n">4</span><div><h4>Акт приёма-передачи с фотографиями</h4><p>Опись мебели и техники плюс фотофиксация всех царапин, пятен и сколов в день заезда. Это единственное, что защитит депозит при выезде. Снимайте показания счётчиков.</p></div></div>
+    <div class="step"><span class="n">5</span><div><h4>Регистрацию обсуждайте ДО залога</h4><p>Многие собственники отказываются наотрез. Задним числом договориться не получится. Регистрация по месту пребывания нужна для военкомата; для прикрепления к поликлинике достаточно паспорта и полиса ОМС.</p></div></div>
+    <div class="step"><span class="n">6</span><div><h4>Никаких переводов на карту до подписания</h4><p>Ни задатка, ни брони, ни «чтобы не ушла». Только личный осмотр, потом подписание, потом деньги — и лучше с распиской или через перевод с назначением платежа.</p></div></div>
+  </div>
+</div>
+</section>
+<section id="plan">
+<div class="wrap">
+  <h2>План на год</h2>
+  <p class="sub">Две задачи идут параллельно: снять жильё сейчас и не выпасть из очереди на общежитие. Вторая задача важнее — она экономит примерно 300 тысяч рублей в год.</p>
+
+  <div class="box">
+    <div class="step"><span class="n">1</span><div><h4>Первая неделя сентября — зафиксировать заявление письменно</h4>
+    <p>Проверить в личном кабинете, что галочка «требуется общежитие» стоит в «да», сделать скриншот с датой. Скачать бланк заявления с сайта, отправить на <b>4947095@guap.ru</b> с темой «Заявление о предоставлении места в общежитии, ФИО, институт, 1 курс». Продублировать в деканат своего института и получить отметку о принятии на копии. Письмо в «Отправленных» — это ваше доказательство, что заявление подано.</p></div></div>
+
+    <div class="step"><span class="n">2</span><div><h4>Тогда же — запросить свой номер в очереди</h4>
+    <p>Отдельным письмом на 4947095@guap.ru с копией на info@guap.ru:</p>
+    <div class="q">«Прошу в соответствии с п. 3.7 Положения о порядке предоставления обучающимся жилых помещений в общежитиях ГУАП (приказ от 30.07.2026 № 05-558/26) сообщить: 1) включён ли я в реестр нуждающихся в жилых помещениях; 2) мой порядковый номер в очереди по институту; 3) решение Жилищной комиссии по моему заявлению с указанием основания по п. 3.4 Положения. Ответ прошу направить письменно на электронную почту.»</div>
+    <p style="margin-top:10px">Это превращает устное «мест нет» в документ и делает очередь проверяемой.</p></div></div>
+
+    <div class="step"><span class="n">3</span><div><h4>Сентябрь — запустить оформление госсоцпомощи</h4>
+    <p>Родителям обратиться в соцзащиту по месту жительства семьи. Если доход на человека ниже прожиточного минимума — получить справку о назначении государственной социальной помощи. Это единственный законный способ попасть в первоочередную категорию п. 2.6. Оформление занимает 1–2 месяца, поэтому начинать надо сразу. Плюс сразу приложить копию паспорта с регистрацией в другом регионе — это подтверждение нуждаемости.</p></div></div>
+
+    <div class="step"><span class="n">4</span><div><h4>Конец сентября — первая волна освобождений</h4>
+    <p>Часть зачисленных не приехала, часть забрала документы. Зайти лично в каб. 52-50а на Большой Морской и к ответственному за поселение в своём институте. Не письмом — ногами.</p></div></div>
+
+    <div class="step"><span class="n">5</span><div><h4>Октябрь — подключить профком и проректора</h4>
+    <p>По отзывам студентов октябрь — реальный месяц доселения второй волны. Идти в профком студентов (каб. 51-02А, 312-50-55) и просить взять вопрос на контроль: профком по Положению участвует в определении очерёдности, это не декоративный орган. Записаться к проректору Павлову (каб. 12-22, вторник 11–13) — он распределяет квоты между институтами. Идти с папкой: копия заявления, ответ отдела, справки. Если справка о госсоцпомощи готова — донести и просить пересмотра очерёдности.</p></div></div>
+
+    <div class="step"><span class="n">6</span><div><h4>Ноябрь–декабрь — не терять след</h4>
+    <p>Достаточно одного письма или звонка в месяц с просьбой подтвердить актуальный номер в очереди. Задача — чтобы заявление не «потерялось».</p></div></div>
+
+    <div class="step"><span class="n">7</span><div><h4>Первая неделя февраля — главное окно</h4>
+    <p>После первой сессии происходят отчисления и уходы в академический отпуск, места освобождаются массово. Прийти лично до того, как их разберут. Это статистически самый вероятный момент заселения.</p></div></div>
+
+    <div class="step"><span class="n">8</span><div><h4>Если дали место — соглашаться на любое</h4>
+    <p>Отказ от предложенного варианта означает исключение из очереди по п. 2.16. Заселиться, потом просить перевод. Разница между «неудобной общагой за 2 400 ₽» и «удобной студией за 28 000 ₽» — это 300 тысяч рублей за учебный год.</p></div></div>
+
+    <div class="step"><span class="n">9</span><div><h4>Если год прошёл впустую — эскалация</h4>
+    <p>Письменное обращение на имя ректора через канцелярию (info@guap.ru), срок ответа 30 дней по ФЗ-59. Затем комиссия по урегулированию споров ГУАП (обязательный внутренний орган по ст. 45 ФЗ-273), затем жалоба в Минобрнауки как учредителю. Реалистично оценивайте перспективы: ч. 1 ст. 39 ФЗ-273 обусловливает предоставление места «наличием жилищного фонда», и отсутствие свободных мест — законное основание отказа. Судиться имеет смысл только при доказанном нарушении очерёдности.</p></div></div>
+  </div>
+
+  <div class="cols" style="margin-top:22px">
+    <div class="box">
+      <h3>Если решать прямо сейчас</h3>
+      <ul>
+        <li><b>Лучший баланс — Купчино.</b> 25 минут до Гастелло, причём от конечной 2-й линии, то есть сидя. Цена обычного спальника.</li>
+        <li><b>Если бюджет позволяет — Московский район.</b> 12 минут до корпуса, лучший быт, рядом общежитие на Варшавской. Дороже, но экономит два часа жизни в день.</li>
+        <li><b>Совсем дёшево, но по-человечески — Кировский или Красносельский.</b> В черте города, льготный проездной работает.</li>
+        <li><b>Дешевле всего — комната или койко-место.</b> Хостел длительного проживания от 7 500 ₽/мес закрывает вопрос на первые месяцы, пока идёт очередь на общагу.</li>
+        <li><b>Двушка на двоих с однокурсником</b> — лучшее соотношение цены и качества: 13 500–22 500 ₽ с человека за полноценную квартиру с отдельными комнатами.</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>Чего делать не стоит</h3>
+      <ul>
+        <li><b>Мурино, Девяткино, Кудрово.</b> 65–70 минут в один конец, из них 15–20 в очереди на входе в метро. Метрополитен официально заявил, что пропускную способность «Девяткино» увеличить уже нельзя. Метро в Кудрово — не раньше 2029–2030. Плюс не работает льготный БСК: минус вся экономия.</li>
+        <li><b>Пригороды с электричкой</b> — Петергоф, Ломоносов, Всеволожск, Гатчина. Пропустил электричку — опоздал на пару. Вечером после занятий возвращаться тяжело.</li>
+        <li><b>Центр «чтобы жить в Питере»</b>. Дорого, шумно, и до корпуса на Гастелло всё равно 35–40 минут. Романтика центра стоит примерно 15 тысяч в месяц.</li>
+        <li><b>Снимать без осмотра, по фото, с переводом задатка.</b> В августе на этом теряют деньги сотни иногородних семей.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+</section>
+
+<footer>
+<div class="wrap">
+  <p><b>Как это собрано.</b> Данные по ценам — сводка ЦИАН, Авито, Яндекс Недвижимости, Домклик, Restate, piter-arenda и живых объявлений за июль–август 2026. Апарт-отели — тарифы с сайтов операторов. Общежития, порядок заселения и контакты — официальные документы и страницы guap.ru, приказ ГУАП № 05-558/26 от 30.07.2026, ФЗ-273 ст. 39. Тарифы на проезд — metro.spb.ru, распоряжение Комитета по тарифам № 343-р.</p>
+  <p><b>Что является оценкой, а не фактом.</b> Время в пути рассчитано по схеме метро и типовым интервалам в утренний час пик, это не машинная маршрутизация — проверяйте конкретный адрес в Яндекс Картах. Оценки районов по пятибалльной шкале субъективны. Цены, помеченные значком «оценка», выведены расчётом там, где прямых данных по району не нашлось.</p>
+  <p><b>Цены на рынке аренды живут недолго.</b> Сентябрь — пик сезона, к зиме ставки обычно ниже. Перед сделкой перепроверяйте актуальные объявления.</p>
+  <p style="margin-top:18px;color:var(--tx3)">Обновлено 30 августа 2026.</p>
+</div>
+</footer>
+<script>
+/* p = [min, typical, max] в рублях/мес. null = данных нет. est = сегменты, где цифра расчётная. */
+const D=[
+{n:"Адмиралтейский",g:"Центр",t:"центр",m:"Садовая / Сенная / Адмиралтейская",tBm:20,tMos:35,s:3,i:4,v:5,q:2,lo:0,
+ pro:"Всё пешком, максимум городской жизни",con:"Шум, пьяная Сенная и самая дорогая аренда",
+ vd:"Отлично для старших курсов, но первокурснику ездить отсюда на Гастелло 35 минут и платить втридорога.",
+ nt:"Парадные фасады и обшарпанные дворы-колодцы. Вечером у Сенной шумно, карманники. Быта много, но дорого, поликлиники старые. Студентов масса.",
+ p:{bed:[11000,14000,18000],room:[14000,18000,26000],studio:[22900,28000,40000],one:[33000,42000,55000],share:[18000,25000,32000]},est:[]},
+
+{n:"Центральный",g:"Центр",t:"центр",m:"Пл. Восстания / Маяковская / Чернышевская",tBm:35,tMos:40,s:3,i:5,v:5,q:1,lo:0,
+ pro:"Центр всего: транспорт, бары, библиотеки",con:"Ночной шум Рубинштейна и цены",
+ vd:"Дорого и отвлекающе для первого курса. Учиться тут не получится.",
+ nt:"Витрина города, туристы, бары круглосуточно. Спать невозможно, зелени почти нет. Безопасно в смысле людности, но пьяная толпа ночью — данность.",
+ p:{bed:[12000,15000,18000],room:[15000,20000,30000],studio:[25000,32000,45000],one:[35000,45000,60000],share:[20000,27500,35000]},est:[]},
+
+{n:"Василеостровский",g:"Центр",t:"центр",m:"Василеостровская / Приморская",tBm:35,tMos:48,s:4,i:4,v:5,q:3,lo:0,
+ pro:"Самая густая студенческая среда города",con:"Две пересадки и 48 минут до Гастелло",
+ vd:"Прекрасная среда, но транспортно противопоказан студенту ГУАП с парами на Московской.",
+ nt:"Свой замкнутый мир: СПбГУ, Горный, Макаровка, много общаг и дешёвых столовых. Ветер с залива, сырость. На севере острова мёртвая зона без метро.",
+ p:{bed:[11000,14500,18000],room:[15000,21000,28000],studio:[26000,35500,45000],one:[34000,43000,57000],share:[19000,26000,33000]},est:[]},
+
+{n:"Петроградский",g:"Центр",t:"центр",m:"Петроградская / Чкаловская / Спортивная",tBm:35,tMos:40,s:5,i:5,v:4,q:3,lo:0,
+ pro:"Самый уютный и безопасный старый район, прямая 2 линия до Московской",con:"Аренда почти как в центре",
+ vd:"Идеален по качеству жизни и без пересадок до Гастелло, но бюджет выдержит не каждый.",
+ nt:"Модерн, Ботанический сад, Крестовский рядом. Тихо, зелено, дорого. Соседи — интеллигенция и обеспеченные семьи.",
+ p:{bed:[12000,15500,18000],room:[16000,22000,30000],studio:[28000,36000,50000],one:[38000,48000,65000],share:[20000,24000,35000]},est:[]},
+
+{n:"Московский",g:"Ближний пояс",t:"спальник",m:"Московская / Электросила / Парк Победы",tBm:40,tMos:12,s:4,i:5,v:4,q:3,lo:0,
+ pro:"Домашний район ГУАП: 12 минут до пары",con:"Аренда выше, чем в любом другом спальнике",
+ vd:"Оптимальный выбор №1, если бюджет позволяет. Здесь Гастелло, Ленсовета, Московский 149В и общежитие на Варшавской.",
+ nt:"Сталинский ампир, широкий Московский проспект, парк Победы и Пулковский парк. Чисто, ухоженно, много ТЦ, поликлиник, залов. Безопасно.",
+ p:{bed:[9000,12500,16000],room:[13000,17000,24000],studio:[20000,33000,45000],one:[32000,42000,55000],share:[17500,24000,27500]},est:["studio"]},
+
+{n:"Фрунзенский · Купчино",g:"Ближний пояс",t:"спальник",m:"Купчино / Бухарестская / Международная",tBm:45,tMos:25,s:3,i:4,v:3,q:3,lo:0,
+ pro:"25 минут до корпуса сидя, при цене обычного спальника",con:"Скучная панельная монотонность и старая репутация",
+ vd:"Лучший баланс цены и дороги для первокурсника ГУАП. Рекомендую в первую очередь при ограниченном бюджете.",
+ nt:"Эталонный советский спальник, шутки про Купчино вечны, по факту обычный район с нормальным бытом. Купчино — конечная 2-й линии, значит утром гарантированно сидячее место до Московской.",
+ p:{bed:[8500,11500,15000],room:[12000,16000,22000],studio:[25500,32000,62700],one:[30000,38000,48000],share:[16000,21000,27000]},est:["studio"]},
+
+{n:"Кировский",g:"Ближний пояс",t:"спальник",m:"Нарвская / Кировский завод / Автово",tBm:40,tMos:40,s:3,i:3,v:3,q:2,lo:0,
+ pro:"Дёшево, в черте города, рядом общежитие ГУАП на Маршала Жукова",con:"Промзона Кировского завода, воздух и вечерняя неуютность",
+ vd:"Разумный бюджетный вариант, особенно если дали общежитие. 40 минут до Гастелло терпимо.",
+ nt:"Рабочий район, конструктивизм и сталинки вперемешку с промзоной. Воздух хуже, вечером у Нарвской неуютно. Дёшево.",
+ p:{bed:[8500,11000,15000],room:[12000,16000,22000],studio:[24800,32000,50000],one:[29000,37000,47000],share:[17800,26000,37500]},est:["studio"]},
+
+{n:"Калининский",g:"Ближний пояс",t:"спальник",m:"Академическая / Гражданский пр. / Политехническая",tBm:50,tMos:50,s:4,i:4,v:4,q:3,lo:0,
+ pro:"Зелено, безопасно, много студентов Политеха и ЛЭТИ",con:"50 минут до Гастелло — весь город насквозь",
+ vd:"Хорошая среда, плохая логистика: для студента ГУАП это лишний час в день.",
+ nt:"Огромный, зелёный, много молодёжи из-за Политеха и ЛЭТИ. Быт отличный, безопасно. Но 1-я линия до Московской — через весь город с пересадкой.",
+ p:{bed:[8000,11000,14500],room:[9900,16000,24000],studio:[24000,30000,38000],one:[28000,36000,46000],share:[15000,21000,29500]},est:["studio"]},
+
+{n:"Выборгский",g:"Ближний пояс",t:"спальник",m:"Лесная / Пр. Просвещения / Парнас",tBm:45,tMos:50,s:4,i:4,v:4,q:3,lo:0,
+ pro:"Лесная — вузовская и живая, Просвещения и Парнас — дёшево",con:"Северная часть в 50 минутах от корпуса",
+ vd:"Только Лесная имеет смысл. Просвещения и Парнас слишком далеко от Гастелло.",
+ nt:"От вузовской Лесной до бетонного Парнаса — район очень разный. С Просвещения до Московской 16 перегонов по 2-й линии.",
+ p:{bed:[8500,11500,15000],room:[14600,18000,25000],studio:[25000,31500,40000],one:[30000,38000,48000],share:[16000,22000,29000]},est:["studio"]},
+
+{n:"Приморский",g:"Ближний пояс",t:"новостройка",m:"Комендантский / Пионерская / Старая Деревня",tBm:40,tMos:50,s:4,i:4,v:3,q:3,lo:0,
+ pro:"Прямая 5 линия до главного корпуса за 40 минут",con:"Большие мёртвые зоны без метро и 50 минут до Гастелло",
+ vd:"Подходит только старшекурсникам с парами на Большой Морской. Первокурснику — нет.",
+ nt:"Новые и позднесоветские кварталы, Юнтоловский заказник, много семей с детьми. Тихо и безопасно.",
+ p:{bed:[9000,12000,15500],room:[13000,17500,24000],studio:[22000,32000,48000],one:[31000,39000,50000],share:[16500,23000,30000]},est:[]},
+
+{n:"Красногвардейский",g:"Ближний пояс",t:"спальник",m:"Ладожская / Новочеркасская",tBm:40,tMos:45,s:3,i:3,v:2,q:3,lo:0,
+ pro:"Недорого, рядом ТЦ и вокзал",con:"Пересадка на любой маршрут и суетная привокзальная среда",
+ vd:"Средне. Имеет смысл, только если учебная активность связана с корпусом на Передовиков, 13.",
+ nt:"Панельки, Ладожский вокзал, ТЦ, промзона Охты. Репутация средняя, вечером у Ладожской суетно.",
+ p:{bed:[8000,10500,14000],room:[11000,15000,21000],studio:[22000,29000,40000],one:[27000,35000,44000],share:[13500,20000,26000]},est:["studio"]},
+
+{n:"Невский",g:"Ближний пояс",t:"спальник",m:"Ломоносовская / Пролетарская / Ул. Дыбенко",tBm:45,tMos:50,s:3,i:3,v:2,q:3,lo:0,
+ pro:"Дешёвая аренда и набережная Невы",con:"Две пересадки и 50 минут до корпуса",
+ vd:"Не рекомендую: транспортно худший из городских спальников для ГУАП.",
+ nt:"Брежневские панельки вдоль Невы, промзоны, репутация грубоватая. Быт закрыт, но студенческой жизни ноль.",
+ p:{bed:[8000,11000,14000],room:[12000,15500,21000],studio:[20900,30000,42000],one:[28000,36000,46000],share:[15000,22500,28000]},est:[]},
+
+{n:"Красносельский",g:"Ближний пояс",t:"спальник",m:"Пр. Ветеранов",tBm:45,tMos:45,s:3,i:3,v:2,q:3,lo:0,
+ pro:"Одна из самых дешёвых аренд в черте города",con:"Самая перегруженная станция на вход утром, студенческой среды нет",
+ vd:"Бюджетный запасной вариант: льгота БСК работает, но 45 минут и толкучка на Ветеранов.",
+ nt:"Недорогие панельки. Быт есть, среды нет. Утром на «Проспекте Ветеранов» очередь на вход — станция входит в число самых загруженных в городе.",
+ p:{bed:[8000,10000,13000],room:[10000,14000,19000],studio:[21000,27000,34000],one:[25000,32000,40000],share:[13000,18000,24000]},est:["studio"]},
+
+{n:"Шушары",g:"Дальний пояс",t:"новостройка",m:"Шушары (5 линия)",tBm:50,tMos:55,s:3,i:2,v:2,q:2,lo:0,
+ pro:"Своё метро, формально город, работает льготный БСК",con:"Станция далеко от большей части застройки, инфраструктуры почти нет",
+ vd:"Терпимо как компромисс, но 55 минут до Гастелло с двумя пересадками сводит выгоду на нет.",
+ nt:"Новостройки в чистом поле рядом с промзоной и Пулково. Метро есть, но идти до него от многих домов далеко.",
+ p:{bed:null,room:null,studio:[22000,28000,38000],one:[26000,33000,42000],share:[13000,17500,23000]},est:[]},
+
+{n:"Мурино",g:"Дальний пояс",t:"новостройка",m:"Девяткино (Ленобласть)",tBm:70,tMos:70,s:3,i:2,v:3,q:2,lo:1,
+ pro:"Новый чистый дом и самая низкая цена, вокруг сплошь ровесники",con:"70 минут в один конец и льготный БСК не действует в Ленобласти",
+ vd:"Категорически не советую первокурснику: 2,5 часа в день на дорогу плюс скрытые 2 000 ₽/мес на областную подвозку.",
+ nt:"Застройка максимальной плотности, 25 этажей, дворы из паркинга. Школ и поликлиник не хватает, вечная стройка, ветер в чистом поле, дома без ориентиров.",
+ p:{bed:null,room:[10000,13000,18000],studio:[19000,26000,38000],one:[24000,30000,38000],share:[12000,16000,21000]},est:[]},
+
+{n:"Девяткино",g:"Дальний пояс",t:"новостройка",m:"Девяткино",tBm:65,tMos:65,s:3,i:2,v:3,q:2,lo:1,
+ pro:"Метро в шаговой доступности и дёшево",con:"Станция официально исчерпала пропускную способность, очередь утром гарантирована",
+ vd:"Нет. Метрополитен прямо заявил, что увеличить пропускную способность «Девяткино» невозможно — легче не станет.",
+ nt:"Начальник метрополитена в мае 2026 подтвердил: при проектировании станции предусматривались только два перехода, за семь лет застройки пассажиропоток вырос в разы. Очереди на вход утром — норма, а не сбой.",
+ p:{bed:null,room:[12100,18000,24000],studio:[17000,24500,32000],one:[23000,29000,37000],share:[11500,15500,20000]},est:[]},
+
+{n:"Кудрово",g:"Дальний пояс",t:"новостройка",m:"нет метро; автобус до Ул. Дыбенко",tBm:65,tMos:70,s:3,i:3,v:3,q:2,lo:1,
+ pro:"Новое жильё, хороший ритейл и «Мега Дыбенко» под боком",con:"Метро не откроется раньше 2029–2030, а автобус стоит в пробке",
+ vd:"Нет. За все годы учёбы метро здесь не появится, а до Гастелло 70 минут с пересадкой.",
+ nt:"Формально Ленобласть. Из плюсов — лучшая торговая инфраструктура среди «человейников». Из минусов — единственный выезд, который утром стоит.",
+ p:{bed:null,room:null,studio:[19000,25000,33000],one:[24000,30000,38000],share:[12000,16000,21000]},est:[]},
+
+{n:"Колпино",g:"Дальний пояс",t:"пригород",m:"нет метро; автобус до Купчино",tBm:75,tMos:65,s:3,i:3,v:2,q:3,lo:0,
+ pro:"Дёшево, самостоятельный городок со своим бытом",con:"Час с лишним и жёсткая привязка к расписанию",
+ vd:"Только если есть родня и бесплатное жильё. Иначе первокурснику не выжить.",
+ nt:"Промышленный город-спутник в черте Петербурга, поэтому льготный БСК работает. Автобус до Купчино 35–45 минут, дальше две остановки метро.",
+ p:{bed:null,room:null,studio:[20000,28900,38000],one:[20000,28750,36000],share:[11000,15000,20000]},est:[]},
+
+{n:"Пушкин",g:"Дальний пояс",t:"пригород",m:"нет метро; автобусы 187 и 342 до м. Московская",tBm:70,tMos:60,s:4,i:4,v:3,q:4,lo:0,
+ pro:"Красиво, тихо, зелено и прямой автобус именно до Московской",con:"60 минут и полная зависимость от пробок на Пулковском шоссе",
+ vd:"Лучший из пригородов для ГУАП благодаря прямому автобусу, но всё равно два часа в день.",
+ nt:"Царское Село: парки, дворцы, размеренная жизнь. В черте города, БСК работает. Автобусы 187 и 342 идут прямо к корпусам на Московской.",
+ p:{bed:null,room:[10000,13500,18000],studio:null,one:[24000,30000,38000],share:[12500,16500,21000]},est:[]},
+
+{n:"Красное Село",g:"Дальний пояс",t:"пригород",m:"нет метро; автобус до пр. Ветеранов",tBm:80,tMos:80,s:3,i:3,v:2,q:4,lo:0,
+ pro:"Дёшево, формально в черте города, значит БСК работает",con:"80 минут и две пересадки до Гастелло",
+ vd:"Слабый вариант: экономия не окупает 2,5 часа дороги ежедневно.",
+ nt:"Бывший отдельный город, теперь окраина Красносельского района. Автобус 35 минут до «Проспекта Ветеранов», дальше метро с пересадкой.",
+ p:{bed:null,room:null,studio:[23000,28000,35000],one:[23000,29000,35000],share:null},est:[]},
+
+{n:"Всеволожск",g:"Дальний пояс",t:"пригород",m:"нет метро; электричка до Финляндского",tBm:85,tMos:85,s:4,i:3,v:2,q:4,lo:1,
+ pro:"Природа, озёра, свой размеренный уклад",con:"Редкие электрички и отсутствие льготы БСК в Ленобласти",
+ vd:"Нет: пропустил электричку — опоздал на пару, а вечером возвращаться совсем тяжело.",
+ nt:"Ленобласть. Электричка 40–50 минут до Финляндского вокзала с редкими интервалами, дальше метро через весь город.",
+ p:{bed:null,room:null,studio:[17000,24400,30000],one:[22000,28000,35000],share:[11000,14500,19000]},est:[]},
+
+{n:"Гатчина",g:"Дальний пояс",t:"пригород",m:"нет метро; электричка до Балтийского или Купчино",tBm:95,tMos:85,s:4,i:4,v:2,q:4,lo:1,
+ pro:"Полноценный город с парком, дворцом и нормальным бытом",con:"Полтора часа в один конец",
+ vd:"Только для тех, у кого здесь дом. Снимать ради экономии бессмысленно.",
+ nt:"Ленобласть, льготный БСК не работает. С Гатчины-Варшавской электричкой на Купчино, дальше две остановки до Московской.",
+ p:{bed:null,room:null,studio:[17000,28150,48000],one:[18000,25000,35000],share:null},est:[]},
+
+{n:"Петергоф",g:"Дальний пояс",t:"пригород",m:"нет метро; электричка до Балтийского",tBm:85,tMos:85,s:4,i:3,v:4,q:4,lo:0,
+ pro:"Настоящая студенческая жизнь вокруг кампуса СПбГУ, парки и залив",con:"85 минут до корпуса и вечерняя электричка по расписанию",
+ vd:"Отличное место, но не для студента ГУАП: среда чужого вуза, а дорога съест три часа в день.",
+ nt:"В черте города, БСК работает. Кампус СПбГУ создаёт настоящую студенческую среду, но она не ваша.",
+ p:{bed:null,room:[9000,12500,17000],studio:null,one:[22000,27000,34000],share:[12000,15000,19000]},est:[]},
+
+{n:"Сертолово",g:"Дальний пояс",t:"пригород",m:"нет метро; автобус до Просвещения",tBm:85,tMos:95,s:4,i:2,v:1,q:4,lo:1,
+ pro:"Тихо и дёшево",con:"95 минут и непредсказуемые пробки на Выборгском шоссе",
+ vd:"Худший вариант в списке: далеко, без метро, без среды и без льготного БСК.",
+ nt:"Ленобласть. Автобус по Выборгскому шоссе 30–50 минут в зависимости от пробок, дальше 2-я линия насквозь.",
+ p:{bed:null,room:null,studio:[18000,23000,29000],one:[20000,26000,32000],share:null},est:["studio","one"]},
+
+{n:"Ломоносов",g:"Дальний пояс",t:"пригород",m:"нет метро; электричка 60+ мин",tBm:100,tMos:100,s:3,i:2,v:2,q:5,lo:0,
+ pro:"Самая дешёвая аренда и полная тишина",con:"Больше полутора часов в одну сторону",
+ vd:"Исключено для очного первокурсника при любом бюджете.",
+ nt:"Самая дальняя точка списка. Электричка больше часа до Балтийского вокзала, дальше ещё метро с пересадкой.",
+ p:{bed:null,room:[8000,11000,15000],studio:null,one:[18000,24000,30000],share:null},est:["room","one"]}
+];
+</script>
+<script>
+/* k: apart = апарт-отель, hostel = хостел/койко-место, private = частная сдача в апарт-комплексе */
+const A=[
+{n:"Longstay",b:"сеть хостелов длительного проживания",k:"hostel",a:"Академика Лебедева 7/9 · Каменноостровский 26–28 · Наличная 28",d:"Петроградский / Василеостровский / Финляндский",mt:"Пл. Ленина, Петроградская, Приморская",u:"койко-место, 8–10 мест",ar:null,pmin:7500,pmax:7900,tMos:45,tBm:35,
+ inc:"всё включено: КУ, Wi-Fi, ежедневная уборка, прачечная, посуда, охрана 24/7, электронные замки",dep:"без залога и комиссии",mn:"от 7 дней",
+ nt:"Самый дешёвый легальный вариант в городе. Только раздельные мужские и женские номера, посуточных гостей нет. 7 500 ₽ — 10-местный мужской, 7 900 ₽ — 8-местный женский. Карточка объекта на Пл. Ленина где-то помечена как закрытая — обязательно звонить перед поездкой.",u2:"https://longstayhostel.ru/"},
+
+{n:"JobHostel",b:"общежития для длительного проживания",k:"hostel",a:"объекты у метро Шушары, Бугры, Гатчина, Парнас, Нарвская, Бухарестская, Московские ворота, Электросила",d:"разные, включая Ленобласть",mt:"разные",u:"койко-место или комната",ar:null,pmin:5550,pmax:18000,tMos:40,tBm:50,
+ inc:"проживание; оформляют временную регистрацию; подбор и бронирование бесплатны",dep:"уточнять",mn:"1 месяц",
+ nt:"Самая низкая цена из всех — но контингент преимущественно рабочие-релоканты, что для восемнадцатилетнего студента может быть некомфортно. Нижняя граница пересчитана из «от 185 ₽/сутки», точной месячной ставки сайт не публикует.",u2:"https://jobhostel.ru/hostels_in_spb/"},
+
+{n:"Nice Hostel SPB",b:"студенческий тариф",k:"hostel",a:"центр Санкт-Петербурга",d:"Центральный",mt:"центр",u:"койко-место, 2–8 мест",ar:null,pmin:11900,pmax:13900,tMos:40,tBm:25,
+ inc:"проживание, общая кухня",dep:"уточнять",mn:"длительное размещение, сентябрь–апрель",
+ nt:"11 900 ₽ — 8-местная комната по студенческому тарифу, 12 900 ₽ — студенческий в целом, 13 900 ₽ — обычный длительный в межсезонье. Есть женские номера. Летом дороже.",u2:"https://nicehostelspb.com/ceny/"},
+
+{n:"Апартаменты в комплексе START",b:"частные собственники",k:"private",a:"Толубеевский проезд, 8, к. 2",d:"Выборгский",mt:"Парнас",u:"студия",ar:22,pmin:18000,pmax:30000,tMos:55,tBm:50,
+ inc:"зависит от собственника, КУ обычно отдельно",dep:"около 10 000 ₽",mn:"от 1 месяца",
+ nt:"Не оператор, а частная сдача юнитов внутри апарт-комплекса — на 40–50% дешевле тарифов START и «Ава Старт» за те же метры. Гостиничного сервиса и уборки не будет, но охрана, лифты и инфраструктура комплекса те же. Цены по агрегатору, каждое объявление проверять отдельно.",u2:"https://spb.domclick.ru/arenda/apartamenty/metro-parnas"},
+
+{n:"VALO Hotel City · место в 2-местном",b:"VALO, программа ITMO.Aparts",k:"apart",a:"ул. Салова, 61",d:"Фрунзенский",mt:"Бухарестская",u:"место в 2-местном номере «Комфорт»",ar:23,pmin:22500,pmax:null,tMos:30,tBm:40,
+ inc:"КУ, интернет, уборка раз в 2 недели",dep:"20 000 ₽ с номера",mn:"семестр или учебный год",
+ nt:"Самый дешёвый вход именно в апарт-отель, цена указана с человека. Формально программа для студентов ИТМО — студенту ГУАП надо отдельно уточнять доступ. Осторожно: если сосед съедет, второй платит за весь номер или переезжает.",u2:"https://aparts.itmo.ru/valo"},
+
+{n:"Sokroma",b:"сеть апартаментов в центре",k:"apart",a:"несколько объектов: Mel, Гений, ЭтоПитер, Mystery, Elegant, Molbert, Aristocrat",d:"Центральный / Адмиралтейский",mt:"Невский пр., Лиговский пр., Адмиралтейская",u:"студия",ar:12,pmin:25000,pmax:null,tMos:40,tBm:25,
+ inc:"оборудованная кухня, посуда, мебель, техника, интернет",dep:"уточнять",mn:"длительный срок",
+ nt:"Самая низкая цена среди апартов в центре, но юниты крошечные — 9,5–18 м², чаще около 10. Более 145 апартаментов в фонде. Разбивка цен по конкретным объектам не публикуется.",u2:"https://sokroma.ru/dlitelnaia-arenda/arenda-apartamentov/"},
+
+{n:"Грин Грейп",b:"SYNCOTEL",k:"apart",a:"наб. Обводного канала, 142/16Б",d:"Адмиралтейский",mt:"Нарвская",u:"студия до 2 человек",ar:null,pmin:30000,pmax:null,tMos:40,tBm:30,
+ inc:"КУ включены в стоимость аренды",dep:"30 000 ₽",mn:"от 30 дней",
+ nt:"Лучшее соотношение цены и сервиса среди апарт-отелей: 30 000 ₽ уже с коммуналкой — это дешевле, чем «от 36 000 + КУ» у конкурентов. Метраж оператор не публикует. Питомцы за доплату.",u2:"https://syncotel.ru/apartaments-month/"},
+
+{n:"Фонтанка Лайтс",b:"SYNCOTEL",k:"apart",a:"наб. реки Фонтанки, 87",d:"Адмиралтейский",mt:"Спасская / Сенная",u:"апартаменты «Эконом» и «Стандарт», 1–2 человека",ar:null,pmin:33000,pmax:null,tMos:33,tBm:15,
+ inc:"КУ включены",dep:"10 000 ₽",mn:"от 30 дней",
+ nt:"Пятнадцать минут пешком до главного корпуса на Большой Морской. Важно: объект сдаётся только с 1 октября 2026 — в августе заселиться нельзя, возможна только бронь.",u2:"https://syncotel.ru/apartaments-month/"},
+
+{n:"Ривер Лайтс",b:"SYNCOTEL",k:"apart",a:"наб. реки Фонтанки, 89",d:"Адмиралтейский",mt:"Спасская / Сенная",u:"1–3-местные номера",ar:null,pmin:33000,pmax:null,tMos:33,tBm:15,
+ inc:"КУ включены",dep:"5 000 ₽",mn:"от 30 дней",
+ nt:"Самый низкий залог среди центральных объектов — 5 000 ₽. Сдаётся с 1 ноября 2026.",u2:"https://syncotel.ru/apartaments-month/"},
+
+{n:"START · Стандарт",b:"START",k:"apart",a:"Толубеевский проезд, 8, к. 2",d:"Выборгский",mt:"Парнас / Пр. Просвещения",u:"студия «Стандарт»",ar:19.5,pmin:34900,pmax:null,tMos:55,tBm:50,
+ inc:"мебель, техника, стиральная машина, Smart TV, посуда, полотенца, интернет",dep:"не опубликован",mn:"от 30 суток",
+ nt:"Коммуналка, включая счётчики, оплачивается дополнительно — итог выше заявленного на 3 000–6 000 ₽. Скидка до 10% при бронировании напрямую с сайта.",u2:"https://startapart.ru/"},
+
+{n:"Ава Салют",b:"SYNCOTEL",k:"apart",a:"Пулковское шоссе, 14, стр. 6",d:"Московский",mt:"Звёздная",u:"студия «Стандарт» и «Люкс», 1–2-комнатные",ar:null,pmin:35000,pmax:null,tMos:18,tBm:45,
+ inc:"мебель, техника; КУ отдельно",dep:"100% месячной платы",mn:"от 30 дней",
+ nt:"Один из ближайших к корпусам на Московской. Тот же объект, что Salut V, но через оператора SYNCOTEL и заметно дешевле. Сдаётся с 15 августа 2026.",u2:"https://syncotel.ru/apartaments-month/"},
+
+{n:"Сити Лайтс",b:"SYNCOTEL",k:"apart",a:"Невский проспект, 90",d:"Центральный",mt:"Маяковская",u:"номер «Стандарт», 1–2-местные апартаменты",ar:null,pmin:35000,pmax:null,tMos:40,tBm:30,
+ inc:"КУ включены",dep:"5 000 – 10 000 ₽",mn:"от 30 дней",
+ nt:"Самая центральная локация, которая вообще влезает в бюджет — прямо на Невском. Сдаётся с 1 октября 2026.",u2:"https://syncotel.ru/apartaments-month/"},
+
+{n:"Ава Старт",b:"SYNCOTEL",k:"apart",a:"Толубеевский проезд, 8, к. 2",d:"Выборгский",mt:"Парнас",u:"студия до 2 человек",ar:null,pmin:36000,pmax:null,tMos:55,tBm:50,
+ inc:"мебель, техника; КУ отдельно",dep:"100% месячной платы",mn:"от 30 дней",
+ nt:"Тот же комплекс START, другой оператор. Сдаётся с 15 августа 2026.",u2:"https://syncotel.ru/apartaments-month/"},
+
+{n:"Best Western Zoom",b:"Best Western",k:"apart",a:"ул. Матроса Железняка, 2, стр. 1",d:"Приморский",mt:"Чёрная речка",u:"«Стандарт» и «Супериор»",ar:18,pmin:36500,pmax:48000,tMos:50,tBm:40,
+ inc:"мебель, техника, ресепшн, интернет",dep:"10 000 ₽ (15 000 ₽ с питомцем)",mn:"от 1 месяца",
+ nt:"Коммуналка +7 000 ₽/мес сверху, финальная уборка при выезде 3 200 ₽. Заезд по долгосрочным тарифам с 10 августа 2026. Верхняя цена — «Супериор» 24 м².",u2:"https://bwzh.ru/long-lease/"},
+
+{n:"Ава Интуит",b:"SYNCOTEL",k:"apart",a:"Витебский проспект, 99–101",d:"Московский",mt:"Купчино",u:"студия, 1- и 2-комнатные",ar:null,pmin:37000,pmax:null,tMos:28,tBm:45,
+ inc:"мебель, техника; КУ отдельно",dep:"100% месячной платы",mn:"от 30 дней",
+ nt:"Тот же комплекс, что IN2IT, но через стороннего оператора и почти на 10 000 ₽ дешевле. Сдаётся с 15 августа 2026.",u2:"https://syncotel.ru/apartaments-month/"},
+
+{n:"VALO · студенческий тариф",b:"VALO",k:"apart",a:"ул. Салова, 61",d:"Фрунзенский",mt:"Бухарестская",u:"студия, 1-местный номер «Стандарт»",ar:16,pmin:37000,pmax:41000,tMos:30,tBm:40,
+ inc:"КУ, интернет, уборка раз в 2 недели",dep:"20 000 ₽",mn:"от 1 месяца, студтариф — на учебный год",
+ nt:"37 000 ₽ — фиксированная студенческая цена на весь учебный год, 41 000 ₽ — обычный каталожный тариф. Две минуты до метро. Стиральной машины в номере нет.",u2:"https://valohotelcity.ru/dolgosrochnaya/rooms-catalog/"},
+
+{n:"START · Студия",b:"START",k:"apart",a:"Толубеевский проезд, 8, к. 2",d:"Выборгский",mt:"Парнас",u:"студия",ar:22.5,pmin:37500,pmax:null,tMos:55,tBm:50,
+ inc:"мебель, техника, стиральная машина, Smart TV, посуда",dep:"не опубликован",mn:"от 30 суток",nt:"КУ оплачиваются дополнительно.",u2:"https://startapart.ru/"},
+
+{n:"START · Бизнес",b:"START",k:"apart",a:"Толубеевский проезд, 8, к. 2",d:"Выборгский",mt:"Парнас",u:"студия «Бизнес»",ar:26,pmin:39500,pmax:null,tMos:55,tBm:50,
+ inc:"мебель, техника, полноценное рабочее место",dep:"не опубликован",mn:"от 30 суток",nt:"КУ дополнительно.",u2:"https://startapart.ru/"},
+
+{n:"ARTSTUDIO M103",b:"ARTSTUDIO",k:"apart",a:"у метро «Московские ворота»",d:"Московский",mt:"Московские ворота",u:"студия",ar:null,pmin:40000,pmax:null,tMos:15,tBm:35,
+ inc:"уборка раз в 7–14 дней со сменой белья и полотенец, ресепшн 24/7, охрана, видеонаблюдение",dep:"не опубликован",mn:"от 1 месяца",
+ nt:"Апарт-отель 4*, одна из лучших локаций относительно корпусов на Московской. Точный адрес и метраж на сайте сети не опубликованы. Можно с питомцами.",u2:"https://artstudiom103.ru/rent"},
+
+{n:"Salut V",b:"Salut",k:"apart",a:"Пулковское шоссе, 14",d:"Московский",mt:"Звёздная / Московская",u:"студия: комната с кухней и санузлом",ar:null,pmin:42000,pmax:null,tMos:18,tBm:45,
+ inc:"мебель, техника, договор аренды",dep:"5 000 ₽ возвратный",mn:"от 1 месяца",
+ nt:"Агрегаторы указывали «от 20 000 ₽» — это не подтвердилось, взята цена с сайта оператора. Категории ECONOM, STANDART, COMFORT. Рядом Пулково и Экспофорум.",u2:"https://salut-rent.ru/longterm"},
+
+{n:"START · Супериор",b:"START",k:"apart",a:"Толубеевский проезд, 8, к. 2",d:"Выборгский",mt:"Парнас",u:"студия «Супериор»",ar:28,pmin:43500,pmax:null,tMos:55,tBm:50,
+ inc:"мебель, техника",dep:"не опубликован",mn:"от 30 суток",nt:"КУ дополнительно. Оператор позиционирует как оптимальный формат для длительного проживания.",u2:"https://startapart.ru/"},
+
+{n:"IN2IT · Студия Стандарт",b:"IN2IT (PLG Hotels)",k:"apart",a:"Витебский проспект, 101, к. 1",d:"Московский",mt:"Купчино / Звёздная",u:"студия «Стандарт», 1–2 человека",ar:24,pmin:45000,pmax:50000,tMos:28,tBm:45,
+ inc:"бельё, посуда, Wi-Fi, стиральная машина, уборка раз в неделю, ТВ, можно с питомцами",dep:"половина месячной аренды",mn:"от 1 месяца",
+ nt:"КУ +6 000 ₽/мес сверху. Парадокс тарифа: 45 000 ₽ при заезде на месяц и 50 000 ₽ при заезде от полугода — второе идёт с пакетом «Комфорт». Генеральная уборка при выезде 5 000 ₽.",u2:"https://in2it.ru/rent"},
+
+{n:"IN2IT · Студия Компакт",b:"IN2IT (PLG Hotels)",k:"apart",a:"Витебский проспект, 101, к. 1",d:"Московский",mt:"Купчино / Звёздная",u:"студия «Компакт», 1 человек",ar:18,pmin:45200,pmax:null,tMos:28,tBm:45,
+ inc:"бельё, посуда, Wi-Fi, стиральная машина, уборка раз в неделю, ТВ",dep:"половина месячной аренды",mn:"от 1 месяца",
+ nt:"КУ +5 800 ₽/мес сверху, то есть фактически около 51 000 ₽. Трансфер из Пулково 1 700 ₽.",u2:"https://in2it.ru/rent"},
+
+{n:"YE'S Hoshimina",b:"YE'S",k:"apart",a:"ул. Хошимина",d:"Выборгский",mt:"Пр. Просвещения",u:"апартамент «Стандарт» с кухней",ar:28,pmin:46500,pmax:null,tMos:50,tBm:45,
+ inc:"ресепшн 24/7, уборка, интернет",dep:"не опубликован",mn:"от 1 суток до 11 месяцев",
+ nt:"Скидка студентам 10% на аренду до месяца, периодически бывает акция −20%. На первом этаже фитнес Sportlife с бассейном на 2 500 м² со скидкой для жильцов. Точный номер дома не публикуется.",u2:"https://yesapart.com/hotels/sankt-peterburg/hoshimina/"},
+
+{n:"Ladozhsky Avenir",b:"AVENIR",k:"apart",a:"пр. Энергетиков, 8, к. 2, стр. 1",d:"Красногвардейский",mt:"Ладожская",u:"студия",ar:24,pmin:47300,pmax:null,tMos:45,tBm:40,
+ inc:"мебель, техника, ресепшн",dep:"не опубликован",mn:"от 1 месяца",
+ nt:"Сеть заявляет аренду от 42 000 ₽/мес по другим объектам — Moskovsky у Московских ворот, Putilov у Кировского завода, Kirovsky в Автово, — но пообъектных месячных цен на сайте нет, надо звонить.",u2:"https://avenirapart.com/hotels/ladozhsky-avenir/"},
+
+{n:"Ава Континент",b:"SYNCOTEL",k:"apart",a:"ул. Салова, 61",d:"Фрунзенский",mt:"Бухарестская",u:"студия до 2 человек",ar:null,pmin:50000,pmax:null,tMos:30,tBm:40,
+ inc:"мебель, техника; КУ отдельно",dep:"100% месячной платы",mn:"от 30 дней",
+ nt:"Тот же комплекс VALO, но через стороннего оператора и на 13 000 ₽ дороже прямого студенческого тарифа. Смысла нет — идите напрямую в VALO.",u2:"https://syncotel.ru/apartaments-month/"},
+
+{n:"ARTSTUDIO Moskovsky",b:"ARTSTUDIO",k:"apart",a:"у метро «Фрунзенская», деловой центр",d:"Адмиралтейский / Московский",mt:"Фрунзенская",u:"студия",ar:null,pmin:50000,pmax:null,tMos:20,tBm:25,
+ inc:"уборка раз в 7–14 дней со сменой белья, ресепшн 24/7, охрана",dep:"не опубликован",mn:"от 1 месяца",
+ nt:"Апарт-отель 3*. Удачное положение между центром и корпусами на Московской. Точный адрес и метраж на сайте сети не опубликованы.",u2:"https://artstudiomoskovsky.ru/rent"},
+
+{n:"IN2IT · Студия Комфорт",b:"IN2IT (PLG Hotels)",k:"apart",a:"Витебский проспект, 101, к. 1",d:"Московский",mt:"Купчино / Звёздная",u:"студия «Комфорт», 1–2 человека",ar:26,pmin:51000,pmax:56000,tMos:28,tBm:45,
+ inc:"бельё, посуда, Wi-Fi, стиральная машина, уборка раз в неделю, ТВ",dep:"половина месячной аренды",mn:"от 1 месяца",
+ nt:"КУ +7 500 ₽/мес сверху — итого около 58 500 ₽. Это самая граница бюджета.",u2:"https://in2it.ru/rent"},
+
+{n:"YE'S Marata · Студия",b:"YE'S",k:"apart",a:"ул. Социалистическая, 21",d:"Центральный",mt:"Владимирская / Достоевская",u:"студия",ar:20,pmin:52500,pmax:null,tMos:35,tBm:25,
+ inc:"ресепшн 24/7, уборка, интернет, бесплатный коворкинг в лобби, фитнес-центр",dep:"не опубликован",mn:"от 1 суток до 11 месяцев",
+ nt:"Единственная категория в Marata, которая влезает в бюджет. Летняя распродажа даёт скидки до 35% на долгосрочную аренду — при её применении цена падает существенно ниже, стоит спросить напрямую.",u2:"https://yesapart.com/hotels/sankt-peterburg/marata/"}
+];
+
+/* дороже 60 000 ₽ — справочно */
+const AOVER=[
+ {n:"Docklands",a:"наб. Макарова, Васильевский остров",p:"студии 30 м² от 67 000 ₽/мес при сроке от 3 месяцев; отдельные категории с 1 сентября от 59 000–61 000 ₽; линейка до 92 000 ₽"},
+ {n:"Vertical Фрунзенская",a:"Московский пр., 73, к. 3",p:"долгосрочная аренда «Стандарт» 65 000 ₽/мес"},
+ {n:"YE'S Marata · Стандарт",a:"ул. Социалистическая, 21",p:"26 м² от 64 350 ₽/мес"},
+ {n:"YE'S Hoshimina · Делюкс",a:"ул. Хошимина",p:"42 м² от 62 400 ₽/мес"},
+ {n:"IN2IT · Делюкс Евро",a:"Витебский пр., 101, к. 1",p:"35 м² — 68 000 ₽ + 10 000 ₽ КУ"},
+ {n:"ARTSTUDIO Nevsky",a:"площадь Восстания",p:"от 75 000 ₽/мес"}
+];
+</script>
+<script>
+(function(){
+"use strict";
+var $=function(id){return document.getElementById(id)};
+var esc=function(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})};
+var money=function(v){return Math.round(v).toLocaleString("ru-RU").replace(/ /g," ")+" ₽"};
+
+/* ================= РАЙОНЫ ================= */
+var SEGS=[
+ {k:"bed",  l:"Койко-место", ku:0},
+ {k:"room", l:"Комната",     ku:1500},
+ {k:"studio",l:"Студия",     ku:5500},
+ {k:"one",  l:"Однушка",     ku:6500},
+ {k:"share",l:"Доля в двушке",ku:3250}
+];
+var SEGL={};SEGS.forEach(function(s){SEGL[s.k]=s.l});
+var ZONES=["Центр","Ближний пояс","Дальний пояс"];
+var st={seg:"studio",zones:ZONES.slice(),budget:45000,time:60,campus:"tMos",sort:"score"};
+
+function chips(host,items,active,multi,onchange){
+  host.innerHTML="";
+  items.forEach(function(it){
+    var e=document.createElement("div");
+    e.className="chip"+(active(it.k)?" on":"");
+    e.textContent=it.l;
+    e.onclick=function(){onchange(it.k);};
+    host.appendChild(e);
+  });
+}
+function drawSegChips(){
+  chips($("segChips"),SEGS.map(function(s){return{k:s.k,l:s.l}}),
+    function(k){return st.seg===k},false,
+    function(k){st.seg=k;drawSegChips();render();});
+}
+function drawZoneChips(){
+  chips($("zoneChips"),ZONES.map(function(z){return{k:z,l:z}}),
+    function(k){return st.zones.indexOf(k)>-1},true,
+    function(k){
+      var i=st.zones.indexOf(k);
+      if(i>-1){if(st.zones.length>1)st.zones.splice(i,1);}else st.zones.push(k);
+      drawZoneChips();render();
+    });
+}
+
+function life(d){return d.s+d.i+d.v+d.q}
+function dots(v){var h="";for(var i=1;i<=5;i++)h+='<i class="'+(i<=v?"f":"")+'"></i>';return '<span class="dots">'+h+'</span>'}
+function rate(l,v){return '<div class="rate"><span>'+l+'</span>'+dots(v)+'</div>'}
+
+function dcard(d,i){
+  var seg=st.seg,p=d.p[seg],t=d[st.campus];
+  var isEst=(d.est||[]).indexOf(seg)>-1;
+  var ku=0;SEGS.forEach(function(s){if(s.k===seg)ku=s.ku});
+  var tr=d.lo?3800:1599;
+  var total=p[1]+ku+tr;
+  var tags='<span class="tag b">'+esc(d.g)+'</span><span class="tag">'+esc(d.t)+'</span>';
+  if(t<=25)tags+='<span class="tag g">'+t+' мин до корпуса</span>';
+  else if(t>=55)tags+='<span class="tag r">'+t+' мин в одну сторону</span>';
+  if(d.lo)tags+='<span class="tag r">Ленобласть · нет льготного БСК</span>';
+  if(isEst)tags+='<span class="tag y">оценка</span>';
+
+  var rows="";
+  SEGS.forEach(function(s){
+    var v=d.p[s.k];
+    rows+='<tr><td>'+s.l+((d.est||[]).indexOf(s.k)>-1?' <span style="color:var(--warn)">·оц.</span>':'')+'</td><td>'+
+      (v?money(v[1])+' <span style="color:var(--tx3)">('+money(v[0])+'–'+money(v[2])+')</span>':'<span style="color:var(--tx3)">нет данных</span>')+'</td></tr>';
+  });
+
+  var pct=Math.max(6,Math.min(100,Math.round(t/100*100)));
+  return '<div class="card" data-i="'+i+'">'+
+   '<div class="top"><div><h3>'+esc(d.n)+'</h3><div class="metro">'+esc(d.m)+'</div></div>'+
+   '<div class="price"><b>'+money(p[1])+'</b><s>'+money(p[0])+'–'+money(p[2])+'</s></div></div>'+
+   '<div class="tags">'+tags+'</div>'+
+   '<div class="bar"><i style="width:'+pct+'%"></i></div>'+
+   '<div class="barlbl"><span>до '+(st.campus==="tMos"?"Гастелло 15":"Большой Морской 67")+'</span><span>'+t+' мин</span></div>'+
+   '<div class="more">'+
+     '<div class="rates">'+rate("Безопасность",d.s)+rate("Инфраструктура",d.i)+rate("Студенческая среда",d.v)+rate("Тишина",d.q)+'</div>'+
+     '<div class="pc p">'+esc(d.pro)+'</div><div class="pc c">'+esc(d.con)+'</div>'+
+     (d.nt?'<div style="font-size:13px;color:var(--tx2);margin-top:8px">'+esc(d.nt)+'</div>':'')+
+     '<div class="verdict">'+esc(d.vd)+'</div>'+
+     '<table class="ptab">'+rows+'</table>'+
+     '<div class="verdict" style="border-left-color:var(--ok)"><b>'+money(total)+'</b> в месяц всего за «'+SEGL[seg].toLowerCase()+'»: аренда '+money(p[1])+
+     (ku?' + КУ ≈ '+money(ku):' + КУ обычно в цене')+' + проездной '+money(tr)+'.</div>'+
+   '</div></div>';
+}
+
+function render(){
+  $("budgetV").textContent=money(st.budget);
+  $("timeV").textContent=st.time+" мин";
+  var list=D.filter(function(d){
+    var p=d.p[st.seg];
+    return p && p[1]<=st.budget && d[st.campus]<=st.time && st.zones.indexOf(d.g)>-1;
+  });
+  var camp=st.campus;
+  list.sort(function(a,b){
+    if(st.sort==="price")return a.p[st.seg][1]-b.p[st.seg][1];
+    if(st.sort==="time")return a[camp]-b[camp];
+    if(st.sort==="life")return life(b)-life(a);
+    return (a.p[st.seg][1]/1000+a[camp]-life(a)*1.6)-(b.p[st.seg][1]/1000+b[camp]-life(b)*1.6);
+  });
+  $("cnt").textContent=list.length+" "+plur(list.length,"вариант","варианта","вариантов");
+  var cheap=list.length?list.reduce(function(a,b){return a.p[st.seg][1]<b.p[st.seg][1]?a:b}):null;
+  $("cntNote").textContent=cheap?("сегмент «"+SEGL[st.seg].toLowerCase()+"», дешевле всего — "+cheap.n+", "+money(cheap.p[st.seg][1])):"";
+  $("grid").innerHTML=list.map(function(d,i){return dcard(d,D.indexOf(d))}).join("");
+  $("empty").style.display=list.length?"none":"block";
+  $("grid").style.display=list.length?"":"none";
+}
+function plur(n,a,b,c){var n10=n%10,n100=n%100;if(n10===1&&n100!==11)return a;if(n10>=2&&n10<=4&&(n100<10||n100>=20))return b;return c}
+
+/* ================= АПАРТ-ОТЕЛИ ================= */
+var KINDS=[{k:"apart",l:"Апарт-отели"},{k:"hostel",l:"Хостелы и койко-места"},{k:"private",l:"Частники в комплексах"}];
+var ast={budget:50000,kinds:["apart","hostel","private"],sort:"price"};
+
+function drawKindChips(){
+  chips($("aTypeChips"),KINDS,
+    function(k){return ast.kinds.indexOf(k)>-1},true,
+    function(k){
+      var i=ast.kinds.indexOf(k);
+      if(i>-1){if(ast.kinds.length>1)ast.kinds.splice(i,1);}else ast.kinds.push(k);
+      drawKindChips();arender();
+    });
+}
+var KL={apart:"апарт-отель",hostel:"хостел",private:"частник в комплексе"};
+
+function acard(a,i){
+  var pr=a.pmax&&a.pmax!==a.pmin?money(a.pmin)+"–"+money(a.pmax):"от "+money(a.pmin);
+  var tags='<span class="tag b">'+KL[a.k]+'</span>';
+  if(a.d)tags+='<span class="tag">'+esc(a.d)+'</span>';
+  if(a.tMos!=null){tags+='<span class="tag '+(a.tMos<=25?"g":a.tMos>=55?"r":"")+'">'+a.tMos+' мин до Гастелло</span>';}
+  if(a.inc&&/включ/i.test(a.inc))tags+='<span class="tag g">КУ включены</span>';
+  if(a.pmin<=15000)tags+='<span class="tag g">дёшево</span>';
+
+  var rows="";
+  var add=function(l,v){if(v)rows+='<tr><td>'+l+'</td><td>'+esc(v)+'</td></tr>'};
+  add("Адрес",a.a);
+  add("Метро",a.mt);
+  add("Что за юнит",a.u);
+  add("Площадь",a.ar?a.ar+" м²":null);
+  add("Коммуналка",a.inc);
+  add("Депозит",a.dep);
+  add("Минимальный срок",a.mn);
+  if(a.tBm!=null)add("До Большой Морской",a.tBm+" мин");
+
+  var pct=a.tMos!=null?Math.max(6,Math.min(100,a.tMos)):0;
+  return '<div class="card" data-a="'+i+'">'+
+   '<div class="top"><div><h3>'+esc(a.n)+'</h3><div class="metro">'+esc(a.b||a.mt||"")+'</div></div>'+
+   '<div class="price"><b>'+(a.pmax&&a.pmax!==a.pmin?money(a.pmin):money(a.pmin))+'</b><s>'+(a.pmax&&a.pmax!==a.pmin?"до "+money(a.pmax):"от")+'</s></div></div>'+
+   '<div class="tags">'+tags+'</div>'+
+   (a.tMos!=null?'<div class="bar"><i style="width:'+pct+'%"></i></div><div class="barlbl"><span>до Гастелло 15</span><span>'+a.tMos+' мин</span></div>':'')+
+   '<div class="more">'+
+     '<table class="ptab">'+rows+'</table>'+
+     (a.nt?'<div class="verdict">'+esc(a.nt)+'</div>':'')+
+     (a.u2?'<div style="margin-top:10px"><a href="'+esc(a.u2)+'" target="_blank" rel="noopener">Сайт оператора →</a></div>':'')+
+   '</div></div>';
+}
+
+function arender(){
+  $("aBudgetV").textContent=money(ast.budget);
+  var list=A.filter(function(a){return a.pmin<=ast.budget && ast.kinds.indexOf(a.k)>-1});
+  list.sort(function(x,y){
+    if(ast.sort==="price")return x.pmin-y.pmin;
+    var f=ast.sort,a=x[f],b=y[f];
+    if(a==null)return 1;if(b==null)return -1;return a-b;
+  });
+  $("aCnt").textContent=list.length+" "+plur(list.length,"вариант","варианта","вариантов");
+  $("aGrid").innerHTML=list.map(function(a){return acard(a,A.indexOf(a))}).join("");
+  $("aEmpty").style.display=list.length?"none":"block";
+  $("aGrid").style.display=list.length?"":"none";
+}
+
+function drawOver(){
+  var host=document.createElement("div");
+  host.className="box";host.style.marginTop="14px";
+  host.innerHTML='<h3>Мимо бюджета — чтобы вы знали, что это существует</h3><ul>'+
+   AOVER.map(function(o){return '<li><b>'+esc(o.n)+'</b> — '+esc(o.a)+'. '+esc(o.p)+'</li>'}).join("")+'</ul>';
+  var anchor=$("aEmpty");
+  anchor.parentNode.insertBefore(host,anchor.nextSibling);
+}
+
+/* ================= общие обработчики ================= */
+document.addEventListener("click",function(e){
+  var c=e.target.closest?e.target.closest(".card"):null;
+  if(!c)return;
+  if(e.target.tagName==="A")return;
+  c.classList.toggle("open");
+});
+
+$("budget").oninput=function(){st.budget=+this.value;render()};
+$("time").oninput=function(){st.time=+this.value;render()};
+$("campus").onchange=function(){st.campus=this.value;render()};
+$("sort").onchange=function(){st.sort=this.value;render()};
+$("aBudget").oninput=function(){ast.budget=+this.value;arender()};
+$("aSort").onchange=function(){ast.sort=this.value;arender()};
+
+/* scroll-spy */
+var links=[].slice.call(document.querySelectorAll("nav a"));
+var secs=links.map(function(a){return document.querySelector(a.getAttribute("href"))});
+function spy(){
+  var y=window.scrollY+140,cur=0;
+  secs.forEach(function(s,i){if(s&&s.offsetTop<=y)cur=i});
+  links.forEach(function(a,i){a.classList.toggle("on",i===cur)});
+}
+window.addEventListener("scroll",spy,{passive:true});
+
+drawSegChips();drawZoneChips();render();
+drawKindChips();arender();drawOver();spy();
+})();
+</script>
+</body>
+</html>
